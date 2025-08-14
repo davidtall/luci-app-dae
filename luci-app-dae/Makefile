@@ -11,7 +11,7 @@ PKG_RELEASE:=1
 
 LUCI_TITLE:=LuCI support for DAE
 LUCI_PKGARCH:=all
-LUCI_DEPENDS:=+dae +dae-geoip +dae-geosite
+LUCI_DEPENDS:=+dae +luci-compat
 
 include $(TOPDIR)/feeds/luci/luci.mk
 
