@@ -115,7 +115,7 @@ o.rmempty = false
 
 o = s:option(Button, "_reload", translate("Reload Service"), translate("Reload the service effective configuration file."))
 o.write = function()
-    sys.exec("/etc/init.d/dae reload")
+    sys.exec("/etc/init.d/dae hot_reload")
 end
 
 -- Links to subpages

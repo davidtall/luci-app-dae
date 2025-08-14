@@ -20,13 +20,17 @@ PKG_MAINTAINER:=Tianling Shen <cnsztl@immortalwrt.org>
 
 PKG_BUILD_DEPENDS:=golang/host bpf-headers
 PKG_BUILD_PARALLEL:=1
-PKG_USE_MIPS16:=0
 PKG_BUILD_FLAGS:=no-mips16
 
 GO_PKG:=github.com/daeuniverse/dae
+GO_PKG_EXCLUDES:=control/kern/tests
 GO_PKG_LDFLAGS_X:= \
 	$(GO_PKG)/cmd.Version=$(PKG_VERSION) \
 	$(GO_PKG)/common/consts.MaxMatchSetLen_=1024
+GO_PKG_TAGS:=trace
+GO_PKG_TARGET_VARS:=$(filter-out CGO_ENABLED=%,$(GO_PKG_TARGET_VARS)) \
+	CGO_ENABLED=1 \
+	GOEXPERIMENT=greenteagc
 
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/bpf.mk
@@ -67,12 +71,13 @@ endef
 
 DAE_CFLAGS:= \
 	-O2 -Wall -Werror \
-	-DMAX_MATCH_SET_LEN=64 \
+	-DMAX_MATCH_SET_LEN=1024 \
 	-I$(BPF_HEADERS_DIR)/tools/lib \
 	-I$(BPF_HEADERS_DIR)/arch/$(BPF_KARCH)/include/asm/mach-generic
 
 define Build/Compile
 	( \
+		export \
 		$(GO_GENERAL_BUILD_CONFIG_VARS) \
 		$(GO_PKG_BUILD_CONFIG_VARS) \
 		$(GO_PKG_BUILD_VARS) \
@@ -80,13 +85,18 @@ define Build/Compile
 		BPF_STRIP_FLAG="-strip=$(LLVM_STRIP)" \
 		BPF_CFLAGS="$(DAE_CFLAGS)" \
 		BPF_TARGET="bpfel,bpfeb" \
+		BPF_TRACE_TARGET="$(GO_ARCH)" ; \
 		go generate $(PKG_BUILD_DIR)/control/control.go ; \
+		go generate $(PKG_BUILD_DIR)/trace/trace.go ; \
 		$(call GoPackage/Build/Compile) ; \
 	)
 endef
 
 define Package/dae/install
 	$(call GoPackage/Package/Install/Bin,$(1))
+
+	$(INSTALL_DIR) $(1)/etc/dae/
+	$(INSTALL_CONF) $(PKG_BUILD_DIR)/example.dae $(1)/etc/dae/
 
 	$(INSTALL_DIR) $(1)/etc/config
 	$(INSTALL_CONF) $(CURDIR)/files/dae.config $(1)/etc/config/dae
