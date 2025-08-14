@@ -24,3 +24,30 @@ msgstr "重载服务生效配置文件。"
 
 msgid "Configuration Editor"
 msgstr "配置编辑器"
+
+msgid "Global Settings"
+msgstr "全局设置"
+
+msgid "DNS Settings"
+msgstr "DNS 设置"
+
+msgid "Node Settings"
+msgstr "节点设置"
+
+msgid "Routing Settings"
+msgstr "路由设置"
+
+msgid "Configuration Sections"
+msgstr "配置部分"
+
+msgid "Configure global settings like ports and interfaces"
+msgstr "配置端口和接口等全局设置"
+
+msgid "Configure DNS upstreams and routing"
+msgstr "配置 DNS 上游和路由"
+
+msgid "Configure nodes and subscription groups"
+msgstr "配置节点和订阅组"
+
+msgid "Configure traffic routing rules"
+msgstr "配置流量路由规则"

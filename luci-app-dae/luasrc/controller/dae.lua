@@ -1,5 +1,6 @@
 local sys  = require "luci.sys"
 local http = require "luci.http"
+local nixio = require "nixio"
 
 module("luci.controller.dae", package.seeall)
 
@@ -8,11 +9,19 @@ function index()
 		return
 	end
 
-	local page = entry({"admin", "services", "dae"}, cbi("dae"), _("DAE"), -1)
+	-- Main page
+	local page = entry({"admin", "services", "dae"}, firstchild(), _("DAE"), -1)
 	page.dependent = true
 	page.acl_depends = { "luci-app-dae" }
 
+	-- Status entry
 	entry({"admin", "services", "dae", "status"}, call("act_status")).leaf = true
+
+	-- Configuration pages
+	entry({"admin", "services", "dae", "global"}, cbi("dae/global"), _("Global Settings"), 1)
+	entry({"admin", "services", "dae", "dns"}, cbi("dae/dns"), _("DNS Settings"), 2)
+	entry({"admin", "services", "dae", "node"}, cbi("dae/node"), _("Node Settings"), 3)
+	entry({"admin", "services", "dae", "route"}, cbi("dae/route"), _("Routing Settings"), 4)
 end
 
 function act_status()
