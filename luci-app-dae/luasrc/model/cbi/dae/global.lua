@@ -39,13 +39,13 @@ s.anonymous = true
 o = s:option(Flag, "enabled", translate("Enabled"))
 o.rmempty = false
 
-o = s:option(Button, "_reload", translate("Reload Service"), translate("Reload the service effective configuration file."))
+o = s:option(Button, "_reload", translate("Reload Service"), translate("Reload service to apply configuration."))
 o.write = function()
     sys.exec("/etc/init.d/dae hot_reload")
 end
 
 -- Global configuration editor
-o = s:option(TextValue, "globalconf", translate("Global Configuration"))
+o = s:option(TextValue, "globalconf", translate("Global Configuration"), translate("Correctly configure the include field for separate-config to work, or enter complete configuration here (other sub-pages won't need configuration and won't take effect)."))
 o.rmempty = true
 o.wrap = "off"
 

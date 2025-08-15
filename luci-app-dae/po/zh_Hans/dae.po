@@ -1,9 +1,6 @@
 msgid "DAE"
 msgstr ""
 
-msgid "A Linux high-performance transparent proxy solution based on eBPF."
-msgstr "一个基于 eBPF 的 Linux 高性能透明代理解决方案。"
-
 msgid "RUNNING"
 msgstr "运行中"
 
@@ -19,11 +16,8 @@ msgstr "启用"
 msgid "Reload Service"
 msgstr "重载服务"
 
-msgid "Reload the service effective configuration file."
-msgstr "重载服务生效配置文件。"
-
-msgid "Configuration Editor"
-msgstr "配置编辑器"
+msgid "Reload service to apply configuration."
+msgstr "重载服务以使配置文件生效。"
 
 msgid "Global Settings"
 msgstr "全局设置"
@@ -37,17 +31,30 @@ msgstr "节点设置"
 msgid "Routing Settings"
 msgstr "路由设置"
 
-msgid "Configuration Sections"
-msgstr "配置部分"
+msgid "Global Configuration"
+msgstr "全局配置"
 
-msgid "Configure global settings like ports and interfaces"
-msgstr "配置端口和接口等全局设置"
+msgid "DNS Configuration"
+msgstr "DNS配置"
 
-msgid "Configure DNS upstreams and routing"
-msgstr "配置 DNS 上游和路由"
+msgid "Node Configuration"
+msgstr "节点配置"
 
-msgid "Configure nodes and subscription groups"
-msgstr "配置节点和订阅组"
+msgid "Route Configuration"
+msgstr "路由配置"
 
-msgid "Configure traffic routing rules"
-msgstr "配置流量路由规则"
+msgid "Configure global settings for DAE."
+msgstr "调整DAE的全局设置"
+
+msgid "Configure DNS settings for DAE."
+msgstr "调整DAE的DNS设置"
+
+msgid "Configure nodes and groups for DAE."
+msgstr "调整DAE的节点设置"
+
+msgid "Configure routing rules for DAE."
+msgstr "调整DAE的路由设置"
+
+msgid "Correctly configure the include field for separate-config to work, or enter complete configuration here (other sub-pages won't need configuration and won't take effect)."
+msgstr "需要正确配置的include字段以使得separate-config生效，或者在此处填入完整配置，则其他子分页无需配置，也不会生效。"
+
