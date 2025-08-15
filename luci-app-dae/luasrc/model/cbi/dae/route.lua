@@ -19,26 +19,23 @@ if not fs.access(route_file) then
     pname(NetworkManager) -> direct
     dip(224.0.0.0/3, 'ff00::/8') -> direct
     dip(geoip:private) -> direct
-
     dip(1.14.5.14) -> direct
-
     domain(geosite:openai) -> local_group
     dip(geoip:cn) -> direct
     domain(geosite:cn) -> direct
     domain(geosite:category-scholar-cn) -> direct
     domain(geosite:geolocation-cn) -> direct
-
-
     fallback: my_group
 }]]
 )
+end
 end
 
 s = m:section(TypedSection, "dae")
 s.addremove = false
 s.anonymous = true
 
-o = s:option(Button, "_reload", translate("Reload Service"), translate("Reload the service effective configuration file."))
+o = s:option(Button, "_reload", translate("Reload Service"), translate("Reload service to apply configuration."))
 o.write = function()
     sys.exec("/etc/init.d/dae hot_reload")
 end

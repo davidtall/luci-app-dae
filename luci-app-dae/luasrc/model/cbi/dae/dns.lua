@@ -36,12 +36,13 @@ if not fs.access(dns_file) then
 }]]
 )
 end
+end
 
 s = m:section(TypedSection, "dae")
 s.addremove = false
 s.anonymous = true
 
-o = s:option(Button, "_reload", translate("Reload Service"), translate("Reload the service effective configuration file."))
+o = s:option(Button, "_reload", translate("Reload Service"), translate("Reload service to apply configuration."))
 o.write = function()
     sys.exec("/etc/init.d/dae hot_reload")
 end

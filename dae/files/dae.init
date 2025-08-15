@@ -10,6 +10,9 @@ CONF="dae"
 PROG="/usr/bin/dae"
 LOG_DIR="/var/log/dae"
 
+set_chmod_640() {
+  chmod -R 640 /etc/dae/
+}
 
 setlocaluse() {
   uci set dhcp.@dnsmasq[0].localuse="1"
@@ -34,6 +37,7 @@ dellocaluse() {
 }
 
 start_service() {
+	set_chmod_640
 	config_load "$CONF"
 
 	local enabled
@@ -78,5 +82,6 @@ service_triggers() {
 }
 
 hot_reload() {
+	set_chmod_640
 	/etc/init.d/dae running && "$PROG" reload "$(cat /var/run/dae.pid)"
 }

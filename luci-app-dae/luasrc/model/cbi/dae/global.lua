@@ -21,24 +21,14 @@ include {
     config.d/*.dae
 }
 global {
-    tproxy_port: 12345
-
-    log_level: warn
-
-    tcp_check_url: 'http://cp.cloudflare.com'
-    udp_check_dns: 'dns.google:53'
-    check_interval: 600s
-    check_tolerance: 50ms
-
-    #lan_interface: eth0
-    wan_interface: eth0
-    allow_insecure: false
-
-    dial_mode: domain
-    disable_waiting_network: false
-    enable_local_tcp_fast_redirect: false
-    auto_config_kernel_parameter: true
-    sniffing_timeout: 100ms
+    log_level:"error"
+    check_interval:"600s"
+    check_tolerance:"5ms"
+    lan_interface:"br-lan"
+    wan_interface:"auto"
+    enable_local_tcp_fast_redirect:"true"
+    auto_config_kernel_parameter:"true"
+    sniffing_timeout:"300ms"
 }]])
 end
 

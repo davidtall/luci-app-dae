@@ -19,17 +19,14 @@ if not fs.access(node_file) then
     node1: 'xxx'
     node2: 'xxx'
 }
-
 subscription {
     my_sub: 'https://www.example.com/subscription/link'
 }
-
 group {
     my_group {
         filter: subtag(my_sub) && !name(keyword: 'ExpireAt:')
         policy: min_moving_avg
     }
-
     local_group {
         filter: name(node1, node2)
         policy: fixed(0)
@@ -37,12 +34,13 @@ group {
 }]]
 )
 end
+end
 
 s = m:section(TypedSection, "dae")
 s.addremove = false
 s.anonymous = true
 
-o = s:option(Button, "_reload", translate("Reload Service"), translate("Reload the service effective configuration file."))
+o = s:option(Button, "_reload", translate("Reload Service"), translate("Reload service to apply configuration."))
 o.write = function()
     sys.exec("/etc/init.d/dae hot_reload")
 end
