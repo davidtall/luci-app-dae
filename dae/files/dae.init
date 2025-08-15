@@ -8,7 +8,7 @@ extra_command "hot_reload" "Hot-reload service"
 
 CONF="dae"
 PROG="/usr/bin/dae"
-LOG_DIR="/var/log/dae"
+LOG="/var/log/dae/dae.log"
 
 set_chmod_640() {
   chmod -R 640 /etc/dae/
@@ -38,12 +38,12 @@ dellocaluse() {
 
 start_service() {
 	set_chmod_640
+	setlocaluse
 	config_load "$CONF"
 
 	local enabled
 	config_get_bool enabled "config" "enabled" "0"
 	[ "$enabled" -eq "1" ] || return 1
-	dellocaluse
 
 	local config_file
 	config_get config_file "config" "config_file" "/etc/dae/config.dae"
@@ -59,7 +59,7 @@ start_service() {
 	procd_set_param command "$PROG" run
 	procd_append_param command --config "$config_file"
 	procd_append_param command --disable-timestamp
-	procd_append_param command --logfile "$LOG_DIR/dae.log"
+	procd_append_param command --logfile "$LOG"
 	procd_append_param command --logfile-maxbackups "$log_maxbackups"
 	procd_append_param command --logfile-maxsize "$log_maxsize"
 
@@ -68,13 +68,13 @@ start_service() {
 	procd_set_param respawn
 	# procd_set_param stdout 1
 	procd_set_param stderr 1
+	dellocaluse
 
 	procd_close_instance
 }
 
 stop_service() {
-	rm -rf "$LOG_DIR"
-	setlocaluse
+	rm -rf "$LOG"
 }
 
 service_triggers() {

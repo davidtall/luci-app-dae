@@ -34,7 +34,6 @@ group {
 }]]
 )
 end
-end
 
 s = m:section(TypedSection, "dae")
 s.addremove = false

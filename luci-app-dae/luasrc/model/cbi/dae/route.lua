@@ -29,7 +29,6 @@ if not fs.access(route_file) then
 }]]
 )
 end
-end
 
 s = m:section(TypedSection, "dae")
 s.addremove = false

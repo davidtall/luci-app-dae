@@ -36,7 +36,6 @@ if not fs.access(dns_file) then
 }]]
 )
 end
-end
 
 s = m:section(TypedSection, "dae")
 s.addremove = false

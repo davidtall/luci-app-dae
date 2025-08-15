@@ -58,3 +58,8 @@ msgstr "调整DAE的路由设置"
 msgid "Correctly configure the include field for separate-config to work, or enter complete configuration here (other sub-pages won't need configuration and won't take effect)."
 msgstr "需要正确配置的include字段以使得separate-config生效，或者在此处填入完整配置，则其他子分页无需配置，也不会生效。"
 
+msgid "Logs"
+msgstr "日志"
+
+msgid "Clear logs"
+msgstr "清空日志"
