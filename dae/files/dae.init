@@ -85,8 +85,7 @@ start_service() {
 }
 
 stop_service() {
-	rm -rf "$LOG"
-	killall -9 dae
+    rm -rf "$LOG"
 }
 
 service_triggers() {
