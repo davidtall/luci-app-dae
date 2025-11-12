@@ -29,7 +29,7 @@ GO_PKG_LDFLAGS_X:= \
 	$(GO_PKG)/common/consts.MaxMatchSetLen_=1024
 GO_PKG_TAGS:=trace
 GO_PKG_TARGET_VARS:=$(filter-out CGO_ENABLED=%,$(GO_PKG_TARGET_VARS)) \
-	CGO_ENABLED=1 \
+	CGO_ENABLED=0 \
 	GOEXPERIMENT=greenteagc
 
 PGO_PROFILE:=$(CURDIR)/pprof/default.pgo
