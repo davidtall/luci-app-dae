@@ -5,12 +5,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=dae
-PKG_VERSION:=2025.11.28
+PKG_VERSION:=2025.12.23
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_VERSION:=3942dff88573f36d564ee48db3ea5a7b9e43ea7e
+PKG_SOURCE_VERSION:=a5356ae79099da59959d9a00dd7e8f5d46aad5f7
 PKG_SOURCE_URL:=https://github.com/LostAttractor/dae.git
 PKG_MIRROR_HASH:=skip
 
@@ -70,8 +70,16 @@ endef
 define Build/Compile
 	( \
 		pushd $(PKG_BUILD_DIR) ; \
-		wget -qO - https://github.com/QiuSimons/dae/commit/f6b4438.patch | patch -p1 -N || true ; \
-		wget -qO - https://github.com/QiuSimons/dae/commit/b689ffe.patch | patch -p1 -N || true ; \
+		echo "fix" ; \
+		wget -qO - https://github.com/QiuSimons/dae/commit/bf1e090.patch | patch -p1 -N || true ; \
+		wget -qO - https://github.com/QiuSimons/dae/commit/00db120.patch | patch -p1 -N || true ; \
+		wget -qO - https://github.com/QiuSimons/dae/commit/fae885a.patch | patch -p1 -N || true ; \
+		wget -qO - https://github.com/QiuSimons/dae/commit/fdee5a5.patch | patch -p1 -N || true ; \
+		wget -qO - https://github.com/QiuSimons/dae/commit/a98e33c.patch | patch -p1 -N || true ; \
+		wget -qO - https://github.com/QiuSimons/dae/commit/b0e25db.patch | patch -p1 -N || true ; \
+		echo "boost" ; \
+		wget -qO - https://github.com/QiuSimons/dae/commit/3058f21.patch | patch -p1 -N || true ; \
+		wget -qO - https://github.com/QiuSimons/dae/commit/5ef5c0a.patch | patch -p1 -N || true ; \
 		go mod edit -replace="github.com/daeuniverse/outbound=github.com/lostattractor/outbound@next" ; \
 		go get -u=patch ; \
 		go get github.com/cilium/ebpf@latest ; \
