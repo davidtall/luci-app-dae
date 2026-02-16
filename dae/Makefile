@@ -70,7 +70,6 @@ endef
 define Build/Compile
 	( \
 		pushd $(PKG_BUILD_DIR) ; \
-		wget -qO - https://github.com/olicesx/dae/commit/9e3abaa.patch | patch -pR1 -N || true ; \
 		go get -u=patch ; \
 		go mod tidy ; \
 		popd ; \
