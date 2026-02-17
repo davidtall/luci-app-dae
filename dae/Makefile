@@ -70,6 +70,7 @@ endef
 define Build/Compile
 	( \
 		pushd $(PKG_BUILD_DIR) ; \
+        go get -u=patch ; \
 		go mod tidy ; \
 		popd ; \
 		export \
