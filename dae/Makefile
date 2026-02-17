@@ -70,6 +70,7 @@ endef
 define Build/Compile
 	( \
 		pushd $(PKG_BUILD_DIR) ; \
+        go mod edit -replace="github.com/daeuniverse/outbound=github.com/olicesx/outbound@feat/ss2022-support" ; \
 		go get -u=patch ; \
 		go mod tidy ; \
 		popd ; \
