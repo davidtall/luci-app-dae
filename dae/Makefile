@@ -47,7 +47,7 @@ define Package/dae
   SUBMENU:=Web Servers/Proxies
   TITLE:=A lightweight and high-performance transparent proxy solution
   DEPENDS:=$(GO_ARCH_DEPENDS) \
-    +ca-bundle +kmod-sched-core +kmod-sched-bpf +kmod-xdp-sockets-diag \
+    +ca-bundle +kmod-sched-core +kmod-sched-bpf \
     +kmod-veth +v2ray-geoip +v2ray-geosite \
     +@KERNEL_XDP_SOCKETS \
     +DAE_USE_VMLINUX_BTF:vmlinux-btf
