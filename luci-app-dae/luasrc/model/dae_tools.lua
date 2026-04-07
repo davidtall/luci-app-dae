@@ -1,6 +1,13 @@
 local fs = require "nixio.fs"
 local dsp = require "luci.dispatcher"
 
+local Button = luci.cbi.Button
+local TextValue = luci.cbi.TextValue
+local TypedSection = luci.cbi.TypedSection
+local SimpleSection = luci.cbi.SimpleSection
+local DummyValue = luci.cbi.DummyValue
+local translate = luci.i18n.translate
+
 local M = {}
 
 function M.init_editor(m, current_page)
