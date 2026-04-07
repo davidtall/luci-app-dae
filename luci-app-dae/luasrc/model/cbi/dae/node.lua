@@ -8,9 +8,6 @@ m.description = translate("Configure nodes and groups for DAE.")
 m:section(SimpleSection).template = "dae/dae_status"
 
 -- Create directory if not exists
-if not fs.stat("/etc/dae/config.d") then
-    fs.mkdirr("/etc/dae/config.d")
-end
 
 -- Check if node config file exists, create if not
 local node_file = "/etc/dae/config.d/node.dae"

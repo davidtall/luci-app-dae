@@ -8,9 +8,6 @@ m.description = translate("Configure global settings for DAE.")
 m:section(SimpleSection).template = "dae/dae_status"
 
 -- Create directory if not exists
-if not fs.stat("/etc/dae/config.d") then
-    fs.mkdirr("/etc/dae/config.d")
-end
 
 -- Check if config file exists, create if not
 local config_file = "/etc/dae/config.dae"

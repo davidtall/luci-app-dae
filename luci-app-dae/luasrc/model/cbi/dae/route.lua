@@ -8,9 +8,6 @@ m.description = translate("Configure routing rules for DAE.")
 m:section(SimpleSection).template = "dae/dae_status"
 
 -- Create directory if not exists
-if not fs.stat("/etc/dae/config.d") then
-    fs.mkdirr("/etc/dae/config.d")
-end
 
 -- Check if route config file exists, create if not
 local route_file = "/etc/dae/config.d/route.dae"
