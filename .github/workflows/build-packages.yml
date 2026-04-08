@@ -21,27 +21,17 @@ jobs:
           - openwrt-24.10
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
-
-      - name: Get node-empty
-        run: |
-          git clone https://github.com/sbwml/node-empty
 
       - name: Init build dependencies
         env:
           DEBIAN_FRONTEND: noninteractive
         run: |
-          sudo swapoff -a
-          sudo rm -rf /etc/apt/sources.list.d/* /usr/share/dotnet /usr/local/lib/android /opt/ghc
           sudo -E apt-get -qq update
-          sudo -E apt-get -qq install clang-15 llvm-15 npm
-          sudo npm install -g pnpm
-          sudo npm i taze -g
-          latest_commit="$(curl -s https://api.github.com/repos/olicesx/dae/commits/optimize/code-quality-fixes | jq -r '.sha' | cut -b 1-7)"
-          timestamp=$(curl -s https://api.github.com/repos/olicesx/dae/commits/optimize/code-quality-fixes | jq -r '.commit.author.date')
-          formatted_timestamp=$(date --date="$timestamp" "+%Y-%m-%d")
+          sudo -E apt-get -qq install clang-15 llvm-15
+          latest_commit=$(grep 'PKG_SOURCE_VERSION:=' ./dae/Makefile | cut -d '=' -f 2 | cut -c 1-7)
           echo "version=$latest_commit" >> "$GITHUB_ENV"
 
       - name: Building packages

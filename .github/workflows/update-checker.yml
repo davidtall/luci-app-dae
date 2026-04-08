@@ -1,4 +1,4 @@
-name: Build Web
+name: Update Checker
 
 on:
   workflow_dispatch:
@@ -13,7 +13,7 @@ jobs:
       latest_commit_full: ${{ steps.check.outputs.latest_commit_full }}
       latest_core_date: ${{ steps.check.outputs.latest_core_date }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 1
 
@@ -41,14 +41,10 @@ jobs:
     if: needs.check_update.outputs.updated == 'true'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
           persist-credentials: false
-
-      - uses: actions/setup-node@main
-        with:
-          node-version: 18
 
       - name: Build System Setup
         env:
@@ -56,8 +52,6 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y squashfs-tools jq dos2unix
-          sudo npm install -g pnpm
-          sudo npm i taze -g
 
       - name: Update Makefile
         run: |
@@ -69,7 +63,6 @@ jobs:
 
       - name: Commit file
         run: |
-          rm -rf build
           git config --global user.email simonsqiu@foxmail.com
           git config --global user.name SimonsQiu
           git add .
