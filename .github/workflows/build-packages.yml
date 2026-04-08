@@ -83,11 +83,12 @@ jobs:
           ls -lah release-dist
 
       - name: Create or update GitHub release
-        uses: softprops/action-gh-release@v2
+        uses: ncipollo/release-action@v1
         with:
           name: dae_kix_${{ needs.prepare.outputs.version }}
-          tag_name: dae_kix_${{ needs.prepare.outputs.version }}
-          target_commitish: kix
+          tag: dae_kix_${{ needs.prepare.outputs.version }}
+          commit: kix
           token: ${{secrets.ACTIONS_DEPLOY_KEY}}
-          files: "release-dist/*.ipk"
-          overwrite: true
+          artifacts: "release-dist/*.ipk"
+          allowUpdates: true
+          replacesArtifacts: true
