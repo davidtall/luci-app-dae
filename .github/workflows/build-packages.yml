@@ -90,3 +90,4 @@ jobs:
           target_commitish: kix
           token: ${{secrets.ACTIONS_DEPLOY_KEY}}
           files: "release-dist/*.ipk"
+          overwrite: true
