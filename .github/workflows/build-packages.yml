@@ -21,7 +21,7 @@ jobs:
           - openwrt-24.10
 
     steps:
-      - uses: actions/checkout@main
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
@@ -54,18 +54,16 @@ jobs:
           V: s
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@main
+        uses: actions/upload-artifact@v7
         with:
           name: ${{ matrix.arch }}
           path: bin/packages/${{ matrix.arch }}/packages_ci/*.ipk
 
       - name: Upload packages
-        uses: ncipollo/release-action@v1
+        uses: softprops/action-gh-release@v2
         with:
           name: dae_kix_${{ env.version }}
-          allowUpdates: true
-          tag: dae_kix_${{ env.version }}
-          commit: kix
+          tag_name: dae_kix_${{ env.version }}
+          target_commitish: kix
           token: ${{secrets.ACTIONS_DEPLOY_KEY}}
-          replacesArtifacts: true
-          artifacts: "bin/packages/${{ matrix.arch }}/packages_ci/*.ipk"
+          files: "bin/packages/${{ matrix.arch }}/packages_ci/*.ipk"

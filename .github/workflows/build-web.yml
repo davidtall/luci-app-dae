@@ -13,7 +13,7 @@ jobs:
       latest_commit_full: ${{ steps.check.outputs.latest_commit_full }}
       latest_core_date: ${{ steps.check.outputs.latest_core_date }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 1
 
@@ -41,7 +41,7 @@ jobs:
     if: needs.check_update.outputs.updated == 'true'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
           persist-credentials: false
