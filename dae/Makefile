@@ -5,12 +5,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=dae
-PKG_VERSION:=2026.04.21
+PKG_VERSION:=2026.04.22
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_VERSION:=ffa0ae58d90bda3f25bddcbd425c515516b7b1bf
+PKG_SOURCE_VERSION:=66acaffcacbcd0096dec997a129f0abee9b66642
 PKG_SOURCE_URL:=https://github.com/olicesx/dae.git
 PKG_MIRROR_HASH:=skip
 
