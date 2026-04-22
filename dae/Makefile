@@ -40,7 +40,7 @@ include $(INCLUDE_DIR)/bpf.mk
 include $(TOPDIR)/feeds/packages/lang/golang/golang-package.mk
 
 GO_PKG_BUILD_VARS+= \
-	GOFLAGS="-trimpath -buildvcs=false"
+	GOFLAGS="-trimpath -buildvcs=false -pgo=auto"
 
 GO_PKG_TARGET_VARS+= \
 	CGO_LDFLAGS="$(TARGET_LDFLAGS) -static -Wl,-s" \
