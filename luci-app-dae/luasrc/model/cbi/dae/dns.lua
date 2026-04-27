@@ -13,7 +13,7 @@ dns {
     max_cache_size: 4096
     upstream {
         localdns: 'udp://127.0.0.1:53'
-        overseadns: 'tcp+udp://one.one.one.one:53'
+        overseadns: 'tcp+udp://1.0.0.1:53'
         nodedns: 'udp://111.222.333.444:53'
     }
     routing {
