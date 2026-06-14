@@ -11,7 +11,7 @@ PKG_RELEASE:=1
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_VERSION:=0dd83147223ea0c6af3efb48f465c375a97f30d9
-PKG_SOURCE_URL:=https://github.com/olicesx/dae.git
+PKG_SOURCE_URL:=https://github.com/daeuniverse/dae.git
 PKG_MIRROR_HASH:=skip
 
 PKG_LICENSE:=AGPL-3.0-only
