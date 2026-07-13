@@ -1,0 +1,2026 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval' blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; style-src 'unsafe-inline' blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; img-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; font-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; media-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; worker-src blob:; connect-src 'self' blob: data:; frame-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<title>Dae Ui High Fidelity Prototype</title>
+<style>:root{color-scheme:light dark;background:light-dark(rgb(255 255 255),rgb(24 24 24))}html,body{margin:0}body{box-sizing:border-box;padding:0;background:inherit}iframe{display:block;width:100%;max-width:none;height:100vh;margin:0;border:0}</style>
+</head>
+<body>
+<iframe sandbox="allow-scripts allow-same-origin" referrerpolicy="no-referrer" title="DAE Dashboard" srcdoc="&lt;!doctype html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+&lt;meta charset=&quot;utf-8&quot;&gt;
+&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1&quot;&gt;
+&lt;meta name=&quot;referrer&quot; content=&quot;no-referrer&quot;&gt;
+&lt;meta http-equiv=&quot;Content-Security-Policy&quot; content=&quot;default-src &#x27;none&#x27;; script-src &#x27;self&#x27; &#x27;unsafe-inline&#x27; &#x27;unsafe-eval&#x27; &#x27;wasm-unsafe-eval&#x27; blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; style-src &#x27;unsafe-inline&#x27; blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; img-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; font-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; media-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; worker-src blob:; connect-src &#x27;self&#x27; blob: data:; frame-src &#x27;none&#x27;; object-src &#x27;none&#x27;; base-uri &#x27;none&#x27;; form-action &#x27;none&#x27;&quot;&gt;
+&lt;title&gt;Dae Ui High Fidelity Prototype&lt;/title&gt;
+&lt;style&gt;:root {
+  color-scheme: light dark;
+  background-color: var(--background) !important;
+
+  /* Agent-facing contract; keep in sync with SKILL.md. */
+  --background: light-dark(rgb(255 255 255), rgb(24 24 24));
+  --foreground: light-dark(rgb(26 28 31), rgb(255 255 255));
+  --card: color-mix(in oklab, var(--foreground) 5%, transparent);
+  --card-foreground: var(--foreground);
+  --popover: light-dark(rgb(255 255 255), rgb(45 45 45));
+  --popover-foreground: var(--foreground);
+  --primary: light-dark(rgb(51 156 255), rgb(131 195 255));
+  --primary-foreground: light-dark(rgb(255 255 255), rgb(13 13 13));
+  --secondary: light-dark(rgb(255 255 255 / 96%), rgb(54 54 54 / 96%));
+  --secondary-foreground: var(--foreground);
+  --muted: color-mix(in srgb, var(--foreground) 10%, transparent);
+  --muted-foreground: light-dark(
+    rgb(26 28 31 / 49.4%),
+    rgb(255 255 255 / 49.8%)
+  );
+  --accent: light-dark(rgb(229 242 255), rgb(13 39 63));
+  --accent-foreground: var(--primary);
+  --destructive: light-dark(rgb(226 85 7), rgb(255 133 73));
+  --border: light-dark(rgb(26 28 31 / 8%), rgb(255 255 255 / 8.2%));
+  --input: light-dark(
+    rgb(26 28 31 / 11.8%),
+    color-mix(in oklab, rgb(0 0 0) 10%, transparent)
+  );
+  --ring: light-dark(rgb(51 156 255), rgb(131 195 255 / 76%));
+  --font-size-base: 14px;
+  --viz-series-1: var(--primary);
+  --viz-series-2: light-dark(rgb(243 136 59), rgb(245 154 86));
+  --viz-series-3: light-dark(rgb(93 201 119), rgb(116 213 139));
+  --viz-series-4: light-dark(rgb(235 119 177), rgb(240 143 192));
+  --viz-series-5: light-dark(rgb(155 121 236), rgb(170 145 239));
+  --viz-series-6: light-dark(rgb(58 185 177), rgb(90 203 194));
+
+  /* Internal implementation variables; not part of the agent contract. */
+  --font-sans: -apple-system, system-ui, &quot;Segoe UI&quot;, sans-serif;
+  --font-mono:
+    ui-monospace, SFMono-Regular, &quot;SF Mono&quot;, Menlo, Consolas, &quot;Liberation Mono&quot;,
+    monospace;
+  --font-size-normal: max(11px, var(--font-size-base));
+  --font-size-tooltip: calc(var(--font-size-base) - 1px);
+  --font-size-small: max(11px, calc(var(--font-size-base) - 2px));
+  --font-size-h1: calc(var(--font-size-normal) * 1.7142857143);
+  --font-size-h2: calc(var(--font-size-normal) * 1.4285714286);
+  --font-size-h3: calc(var(--font-size-normal) * 1.2857142857);
+  --font-weight-normal: 430;
+  --font-weight-medium: 500;
+  --line-height-normal: calc(var(--font-size-normal) * 1.5);
+  --line-height-tooltip: calc(var(--font-size-tooltip) * 1.4285714286);
+  --line-height-small: calc(var(--font-size-small) + 4px);
+  --radius: 12.5px;
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-2xl: calc(var(--radius) * 1.6);
+  --radius-full: 9999px;
+  --shadow-sm: 0 1px 2px -1px rgb(0 0 0 / 8%);
+  --checkmark-image: url(&quot;data:image/svg+xml,%3Csvg xmlns=&#x27;http://www.w3.org/2000/svg&#x27; viewBox=&#x27;0 0 17 17&#x27;%3E%3Cpath d=&#x27;M12.8961 3.64101C13.1297 3.41418 13.4984 3.37523 13.7779 3.56581C14.0571 3.75635 14.1554 4.11331 14.0299 4.41347L13.9615 4.53847L7.71151 13.7045C7.59411 13.8767 7.4063 13.9877 7.19881 14.0072C6.99136 14.0267 6.78564 13.9533 6.63826 13.806L2.88826 10.056L2.79842 9.9457C2.6192 9.67407 2.64927 9.30496 2.88826 9.06581C3.12738 8.82669 3.49647 8.79676 3.76815 8.97597L3.8785 9.06581L7.03084 12.2182L12.8053 3.74941L12.8961 3.64101Z&#x27;/%3E%3C/svg%3E&quot;);
+
+  /* Legacy aliases; not part of the current agent contract. */
+  --viz-bg: transparent;
+  --viz-panel: var(--card);
+  --viz-border: var(--border);
+  --viz-text: var(--foreground);
+  --viz-muted: var(--muted-foreground);
+  --viz-accent: var(--primary);
+  --viz-accent-text: var(--primary-foreground);
+  --viz-accent-bg: var(--accent);
+  --viz-font-size: var(--font-size-base);
+  --viz-warning: var(--destructive);
+  --color-background-primary: var(--background);
+  --color-text-primary: var(--foreground);
+  --color-border-secondary: var(--border);
+}
+
+:root[data-theme=&quot;light&quot;] {
+  color-scheme: light;
+}
+
+:root[data-theme=&quot;dark&quot;] {
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html &gt; body {
+  margin: 0;
+  padding: 5px;
+  color: var(--foreground);
+  background: transparent !important;
+  font-family: var(--font-sans);
+  font-size: var(--font-size-normal);
+  font-weight: var(--font-weight-normal);
+  line-height: var(--line-height-normal);
+}
+
+a {
+  color: color-mix(in srgb, var(--viz-accent) 80%, var(--viz-text) 20%);
+  cursor: pointer;
+  font-weight: var(--viz-font-weight-medium);
+  text-decoration: none;
+  text-underline-offset: 2px;
+}
+
+a:is(:hover, :focus-visible) {
+  text-decoration-line: underline;
+  text-decoration-style: dashed;
+  text-decoration-thickness: 0.5px;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+  margin-block: 0;
+}
+
+h1 {
+  font-size: var(--font-size-h1);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.25;
+}
+
+h2 {
+  font-size: var(--font-size-h2);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.25;
+}
+
+h3,
+h4,
+h5,
+h6 {
+  font-size: var(--font-size-h3);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.3;
+}
+
+b,
+strong,
+th {
+  font-weight: var(--font-weight-medium);
+}
+
+code:not(pre code) {
+  display: inline;
+  padding: 1px 6px;
+  border-radius: var(--radius-sm);
+  corner-shape: superellipse(1.5);
+  background: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.92em;
+  overflow-wrap: anywhere;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  word-break: break-word;
+}
+
+#widget {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  padding: 0;
+  background: transparent !important;
+}
+
+.card {
+  min-width: 0;
+  padding: 12px;
+  overflow: hidden;
+  overflow-wrap: break-word;
+  border-radius: var(--radius-2xl);
+  corner-shape: superellipse(1.5);
+  color: var(--card-foreground);
+  background: var(--card);
+}
+
+#widget &gt; :not(.card) {
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.tooltip {
+  position: fixed;
+  z-index: 50;
+  top: 0;
+  left: 0;
+  width: max-content;
+  max-width: min(
+    20rem,
+    var(--tooltip-available-width, calc(100vw - 10px)),
+    calc(100vw - 10px)
+  );
+  max-height: min(
+    var(--tooltip-available-height, calc(100vh - 10px)),
+    calc(100vh - 10px)
+  );
+  padding: 4px 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  corner-shape: superellipse(1.5);
+  color: var(--popover-foreground);
+  background: var(--popover);
+  box-shadow: none;
+  font-size: var(--font-size-tooltip);
+  line-height: var(--line-height-tooltip);
+  overflow-wrap: break-word;
+  white-space: normal;
+  pointer-events: none;
+  user-select: none;
+}
+
+.viz-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(max(180px, 24%), 1fr));
+  gap: 10px;
+}
+
+.viz-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.viz-stat-value {
+  font-size: var(--font-size-h2);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.25;
+}
+
+.viz-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.viz-badge {
+  padding: 3px 8px;
+  border-radius: var(--radius-full);
+  color: var(--accent-foreground);
+  background: var(--accent);
+  font-weight: var(--font-weight-medium);
+}
+
+small,
+.text-small,
+.viz-badge {
+  font-size: var(--font-size-small);
+  line-height: var(--line-height-small);
+}
+
+.text-muted {
+  color: var(--muted-foreground);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.viz-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.viz-controls &gt; .form-label {
+  display: grid;
+  min-width: min(100%, 260px);
+  flex: 1 1 280px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: 2px 12px;
+  margin-bottom: 0;
+}
+
+.viz-controls &gt; .form-label &gt; :is(.form-control, .form-range, .form-select) {
+  grid-column: 1 / -1;
+}
+
+.btn,
+.form-check-input,
+.form-control,
+.form-range,
+.form-select {
+  font: inherit;
+}
+
+.btn {
+  appearance: button;
+  display: inline-flex;
+  inline-size: fit-content;
+  max-inline-size: 100%;
+  min-height: 28px;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  margin: 0;
+  padding: 0 8px;
+  -webkit-app-region: no-drag;
+  border: 1px solid var(--input);
+  border-radius: var(--radius-lg);
+  corner-shape: superellipse(1.5);
+  color: var(--secondary-foreground);
+  background: var(--secondary);
+  cursor: var(--cursor-interaction, pointer);
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+  user-select: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+.btn:is(.btn-block, .viz-tile) {
+  inline-size: 100%;
+}
+
+.btn.viz-tile {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+a.btn {
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.btn:not(:disabled):hover {
+  background: color-mix(in srgb, var(--foreground) 6%, var(--secondary));
+}
+
+.btn-primary {
+  border-color: transparent;
+  color: var(--primary-foreground);
+  background: var(--foreground);
+  background-clip: padding-box;
+}
+
+.btn-primary .text-muted {
+  color: color-mix(in srgb, var(--primary-foreground) 50%, transparent);
+}
+
+.btn-primary:not(:disabled):hover {
+  background: color-mix(in srgb, var(--foreground) 80%, transparent);
+  background-clip: padding-box;
+}
+
+.btn-ghost {
+  border-color: transparent;
+  color: var(--muted-foreground);
+  background: transparent;
+}
+
+.btn-ghost:not(:disabled):hover {
+  color: var(--foreground);
+  background: color-mix(in srgb, var(--foreground) 6%, var(--secondary));
+}
+
+.btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+[data-lucide] {
+  stroke-width: 1.6;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--foreground);
+}
+
+.form-control {
+  display: block;
+  width: 100%;
+  min-height: 28px;
+  padding: 0 8px;
+  outline: none;
+  border: 1px solid var(--input);
+  border-radius: var(--radius-lg);
+  corner-shape: superellipse(1.5);
+  color: var(--foreground);
+  background: var(--secondary);
+}
+
+.form-control::placeholder {
+  color: var(--muted-foreground);
+}
+
+.form-control[type=&quot;file&quot;] {
+  padding: 0;
+  overflow: hidden;
+  cursor: var(--cursor-interaction, pointer);
+}
+
+.form-control[type=&quot;file&quot;]::file-selector-button {
+  min-height: 26px;
+  margin-right: 8px;
+  padding: 0 8px;
+  border: 0;
+  border-right: 1px solid var(--input);
+  color: var(--secondary-foreground);
+  background: var(--secondary);
+  cursor: inherit;
+  font: inherit;
+}
+
+.form-control[type=&quot;file&quot;]:not(:disabled):hover::file-selector-button {
+  background: color-mix(in srgb, var(--foreground) 6%, var(--secondary));
+}
+
+.form-control-color[type=&quot;color&quot;] {
+  width: 40px;
+  height: 28px;
+  padding: 3px;
+  cursor: var(--cursor-interaction, pointer);
+}
+
+.form-control-color[type=&quot;color&quot;]::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+.form-control-color[type=&quot;color&quot;]::-webkit-color-swatch {
+  border: 0;
+  border-radius: calc(var(--radius-lg) - 4px);
+  corner-shape: superellipse(1.5);
+}
+
+textarea.form-control {
+  height: auto;
+  min-height: 72px;
+  padding: 8px 10px;
+  resize: vertical;
+}
+
+.form-control:focus-visible {
+  border-color: var(--ring);
+  box-shadow: inset 0 0 0 1px var(--ring);
+}
+
+.form-control:disabled,
+.form-select:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.form-select {
+  appearance: none;
+  display: block;
+  width: 100%;
+  min-height: 28px;
+  margin: 0;
+  padding: 0 32px 0 8px;
+  outline: none;
+  border: 1px solid var(--input);
+  border-radius: var(--radius-lg);
+  corner-shape: superellipse(1.5);
+  color: var(--foreground);
+  background-color: var(--secondary);
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--muted-foreground) 50%),
+    linear-gradient(135deg, var(--muted-foreground) 50%, transparent 50%);
+  background-position:
+    calc(100% - 14px) 50%,
+    calc(100% - 10px) 50%;
+  background-repeat: no-repeat;
+  background-size: 4px 4px;
+  cursor: var(--cursor-interaction, default);
+}
+
+.form-select:not(:disabled):hover {
+  background-color: color-mix(in srgb, var(--foreground) 6%, var(--secondary));
+}
+
+.form-select:focus-visible {
+  border-color: var(--ring);
+  box-shadow: inset 0 0 0 1px var(--ring);
+}
+
+.form-check {
+  display: flex;
+  min-height: 20px;
+  align-items: center;
+  gap: 6px;
+}
+
+.form-check-input {
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  flex: 0 0 auto;
+  margin: 0;
+  border: 1px solid var(--input);
+  color: var(--primary-foreground);
+  background-color: transparent;
+  cursor: var(--cursor-interaction, default);
+  transition:
+    background-color 150ms,
+    border-color 150ms,
+    box-shadow 150ms;
+}
+
+.form-check:not(.form-switch) .form-check-input[type=&quot;checkbox&quot;] {
+  border-color: var(--input);
+  border-radius: var(--radius-sm);
+  corner-shape: superellipse(1.5);
+  background-color: var(--secondary);
+  box-shadow: var(--shadow-sm);
+}
+
+.form-check:not(.form-switch)
+  .form-check-input:not(:disabled):not(:checked):hover {
+  background-color: var(--card);
+}
+
+.form-check:not(.form-switch) .form-check-input[type=&quot;checkbox&quot;]:checked {
+  border-color: var(--primary);
+  background-color: var(--primary);
+}
+
+.form-check:not(.form-switch)
+  .form-check-input[type=&quot;checkbox&quot;]:checked::before {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--primary-foreground);
+  content: &quot;&quot;;
+  mask: var(--checkmark-image) center / 12px 12px no-repeat;
+}
+
+.form-check-input[type=&quot;radio&quot;] {
+  width: 14px;
+  height: 14px;
+  border-radius: var(--radius-full);
+}
+
+.form-check-input[type=&quot;radio&quot;]:checked {
+  border: 2px solid var(--primary);
+  background:
+    radial-gradient(circle, var(--primary-foreground) 0 2.5px, transparent 3px),
+    var(--primary);
+}
+
+.form-check:not(.form-switch) .form-check-input:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+.form-check:not(.form-switch) .form-check-input:disabled {
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.form-check:not(.form-switch) .form-check-input:disabled + .form-check-label {
+  cursor: not-allowed;
+}
+
+.form-switch .form-check-input:disabled,
+.form-switch .form-check-input:disabled + .form-check-label {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.form-check-label {
+  color: var(--foreground);
+  cursor: var(--cursor-interaction, default);
+}
+
+.form-switch .form-check-input {
+  position: relative;
+  width: 32px;
+  height: 20px;
+  border: 0;
+  border-radius: var(--radius-full);
+  background: var(--muted);
+  box-shadow: none;
+  transition: background-color 200ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.form-switch .form-check-input::before {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 16px;
+  height: 16px;
+  box-sizing: border-box;
+  border: 1px solid light-dark(var(--primary-foreground), var(--foreground));
+  border-radius: var(--radius-full);
+  background: light-dark(var(--primary-foreground), var(--foreground));
+  box-shadow: var(--shadow-sm);
+  content: &quot;&quot;;
+  transform: translate(2px, -50%);
+  transition: transform 200ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.form-switch .form-check-input:checked {
+  background: var(--primary);
+}
+
+.form-switch .form-check-input:checked::before {
+  transform: translate(14px, -50%);
+}
+
+.form-switch .form-check-input:focus-visible {
+  box-shadow: 0 0 0 2px var(--ring);
+}
+
+.form-range {
+  appearance: none;
+  display: block;
+  width: 100%;
+  height: 28px;
+  flex: 1;
+  margin: 0;
+  padding: 0;
+  outline: none;
+  border: 0;
+  accent-color: var(--primary);
+  background: linear-gradient(
+      color-mix(in srgb, var(--foreground) 7%, transparent),
+      color-mix(in srgb, var(--foreground) 7%, transparent)
+    )
+    center / 100% 2px no-repeat;
+}
+
+.form-range::-webkit-slider-runnable-track {
+  height: 28px;
+  background: transparent;
+}
+
+.form-range::-webkit-slider-thumb {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  margin-top: 4px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  background: light-dark(var(--primary-foreground), var(--foreground));
+}
+
+.form-range:focus-visible::-webkit-slider-thumb {
+  border-color: var(--ring);
+  box-shadow: inset 0 0 0 1px var(--ring);
+}
+
+.form-range::-moz-range-track {
+  height: 28px;
+  background: transparent;
+}
+
+.form-range::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  background: light-dark(var(--primary-foreground), var(--foreground));
+}
+
+.form-range:focus-visible::-moz-range-thumb {
+  border-color: var(--ring);
+  box-shadow: inset 0 0 0 1px var(--ring);
+}
+
+.form-range:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.btn:not(.btn-primary, .viz-tile):is(
+    [aria-pressed=&quot;true&quot;],
+    [aria-selected=&quot;true&quot;],
+    .is-selected
+  ) {
+  border-color: var(--primary);
+  color: var(--primary-foreground);
+  background: var(--primary);
+}
+
+.btn.viz-tile:is([aria-pressed=&quot;true&quot;], [aria-selected=&quot;true&quot;], .is-selected) {
+  border-color: var(--primary);
+  box-shadow: inset 0 0 0 1px var(--primary);
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+#widget &gt; svg {
+  width: 100%;
+}
+
+.text-warning,
+.text-destructive {
+  color: var(--destructive);
+}
+
+html&gt;body{padding:0}&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;div id=&quot;dae-ui-high-fidelity&quot;&gt;
+  &lt;style&gt;
+    #dae-ui-high-fidelity {
+      --background: light-dark(oklch(0.99 0.008 85), oklch(0.16 0.015 60));
+      --foreground: light-dark(oklch(0.18 0.02 60), oklch(0.95 0.015 85));
+      --card: light-dark(oklch(0.99 0.008 85), oklch(0.19 0.015 60));
+      --card-foreground: var(--foreground);
+      --popover: light-dark(oklch(0.99 0.008 85), oklch(0.19 0.015 60));
+      --popover-foreground: var(--foreground);
+      --primary: light-dark(oklch(0.75 0.18 85), oklch(0.82 0.165 85));
+      --primary-foreground: light-dark(oklch(0.18 0.02 60), oklch(0.16 0.015 60));
+      --secondary: light-dark(oklch(0.96 0.015 85), oklch(0.24 0.015 60));
+      --secondary-foreground: var(--foreground);
+      --muted: light-dark(oklch(0.95 0.012 85), oklch(0.24 0.015 60));
+      --muted-foreground: light-dark(oklch(0.5 0.02 60), oklch(0.65 0.02 70));
+      --accent: light-dark(oklch(0.94 0.02 85), oklch(0.26 0.02 65));
+      --accent-foreground: var(--foreground);
+      --border: light-dark(oklch(0.92 0.015 85), oklch(0.28 0.015 60));
+      --input: light-dark(oklch(0.92 0.015 85), oklch(0.3 0.015 60));
+      --ring: var(--primary);
+      --dae-accent: var(--primary);
+      color: var(--foreground);
+      background: var(--background);
+      font-family: ui-sans-serif, system-ui, sans-serif;
+      padding: 18px;
+    }
+    #dae-ui-high-fidelity * { box-sizing: border-box; }
+    #dae-ui-high-fidelity .appbar,
+    #dae-ui-high-fidelity .brand,
+    #dae-ui-high-fidelity .app-actions,
+    #dae-ui-high-fidelity .section-head,
+    #dae-ui-high-fidelity .section-title,
+    #dae-ui-high-fidelity .resource-head,
+    #dae-ui-high-fidelity .resource-title,
+    #dae-ui-high-fidelity .resource-actions,
+    #dae-ui-high-fidelity .meta-row,
+    #dae-ui-high-fidelity .group-zone-head,
+    #dae-ui-high-fidelity .group-badge,
+    #dae-ui-high-fidelity .modal-head,
+    #dae-ui-high-fidelity .tabs,
+    #dae-ui-high-fidelity .form-actions,
+    #dae-ui-high-fidelity .switch-row,
+    #dae-ui-high-fidelity .preview-node {
+      display: flex;
+      align-items: center;
+    }
+    #dae-ui-high-fidelity .appbar {
+      justify-content: space-between;
+      gap: 16px;
+      padding-bottom: 15px;
+      margin-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    #dae-ui-high-fidelity .brand { gap: 10px; min-width: 0; }
+    #dae-ui-high-fidelity .brand-mark {
+      display: grid;
+      place-items: center;
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      color: var(--primary-foreground);
+      background: var(--primary);
+    }
+    #dae-ui-high-fidelity .brand-copy { display: grid; gap: 1px; }
+    #dae-ui-high-fidelity .brand-line { display: flex; align-items: center; gap: 8px; font-weight: 500; }
+    #dae-ui-high-fidelity .app-actions { gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+    #dae-ui-high-fidelity .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--dae-accent);
+      display: inline-block;
+      margin-right: 5px;
+    }
+    #dae-ui-high-fidelity .unsaved { display: none; }
+    #dae-ui-high-fidelity .unsaved.is-visible { display: inline-flex; }
+    #dae-ui-high-fidelity .workspace {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 22px;
+      align-items: start;
+    }
+    #dae-ui-high-fidelity .section { min-width: 0; }
+    #dae-ui-high-fidelity .section-head { justify-content: space-between; gap: 10px; margin-bottom: 9px; padding: 0 3px; }
+    #dae-ui-high-fidelity .section-title { gap: 8px; font-weight: 500; }
+    #dae-ui-high-fidelity .section-title .accent { color: var(--foreground); }
+    #dae-ui-high-fidelity .stack { display: grid; gap: 10px; }
+    #dae-ui-high-fidelity .resource-card { padding: 13px; min-width: 0; }
+    #dae-ui-high-fidelity .resource-card.is-selected {
+      box-shadow: inset 3px 0 0 var(--dae-accent);
+      background: color-mix(in srgb, var(--dae-accent) 8%, var(--card));
+    }
+    #dae-ui-high-fidelity .resource-card[draggable=&quot;true&quot;] { cursor: grab; }
+    #dae-ui-high-fidelity .resource-card.is-dragging { opacity: .5; }
+    #dae-ui-high-fidelity .resource-head { justify-content: space-between; align-items: flex-start; gap: 8px; }
+    #dae-ui-high-fidelity .resource-title { gap: 7px; min-width: 0; font-weight: 500; }
+    #dae-ui-high-fidelity .resource-title .truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    #dae-ui-high-fidelity .resource-actions { gap: 2px; flex: 0 0 auto; }
+    #dae-ui-high-fidelity .icon-btn {
+      display: inline-grid;
+      place-items: center;
+      min-width: 30px;
+      min-height: 30px;
+      padding: 5px;
+    }
+    #dae-ui-high-fidelity .btn-primary {
+      color: var(--primary-foreground);
+      background-color: var(--primary);
+      border-color: var(--primary);
+      box-shadow: 0 1px 2px color-mix(in srgb, var(--foreground) 12%, transparent);
+    }
+    #dae-ui-high-fidelity .btn-primary:hover {
+      color: var(--primary-foreground);
+      background-color: color-mix(in srgb, var(--primary) 90%, var(--background));
+      border-color: color-mix(in srgb, var(--primary) 90%, var(--background));
+    }
+    #dae-ui-high-fidelity .btn-primary:focus-visible {
+      outline: 3px solid color-mix(in srgb, var(--ring) 45%, transparent);
+      outline-offset: 2px;
+    }
+    #dae-ui-high-fidelity .meta-row { gap: 7px; flex-wrap: wrap; margin-top: 7px; color: var(--muted-foreground); }
+    #dae-ui-high-fidelity .drag-grip { color: var(--muted-foreground); }
+    #dae-ui-high-fidelity .config-summary {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 7px 14px;
+      margin-top: 11px;
+      padding-top: 10px;
+      border-top: 1px solid var(--border);
+    }
+    #dae-ui-high-fidelity .summary-item { display: flex; justify-content: space-between; gap: 8px; }
+    #dae-ui-high-fidelity .group-zones { display: grid; gap: 9px; margin-top: 11px; padding-top: 10px; border-top: 1px solid var(--border); }
+    #dae-ui-high-fidelity .group-zone {
+      min-height: 54px;
+      padding: 9px;
+      border: 1px dashed var(--border);
+      border-radius: 8px;
+      transition: background 140ms ease, border-color 140ms ease;
+    }
+    #dae-ui-high-fidelity .group-zone.is-over {
+      border-color: var(--dae-accent);
+      background: color-mix(in srgb, var(--dae-accent) 10%, transparent);
+    }
+    #dae-ui-high-fidelity .group-zone-head { justify-content: space-between; gap: 8px; margin-bottom: 7px; }
+    #dae-ui-high-fidelity .group-zone-title { display: flex; align-items: center; gap: 7px; font-weight: 500; }
+    #dae-ui-high-fidelity .group-zone-head .btn { flex: 0 0 auto; }
+    #dae-ui-high-fidelity .group-items { display: flex; flex-wrap: wrap; gap: 6px; }
+    #dae-ui-high-fidelity .group-badge {
+      gap: 5px;
+      padding: 5px 7px;
+      border-radius: 7px;
+      background: var(--muted);
+      color: var(--foreground);
+    }
+    #dae-ui-high-fidelity .group-badge .filter { color: var(--muted-foreground); }
+    #dae-ui-high-fidelity .group-remove {
+      display: inline-grid;
+      place-items: center;
+      width: 20px;
+      height: 20px;
+      margin: -3px -4px -3px 1px;
+      padding: 0;
+      border: 0;
+      border-radius: 50%;
+      color: var(--muted-foreground);
+      background: transparent;
+      cursor: pointer;
+    }
+    #dae-ui-high-fidelity .group-remove:hover {
+      color: var(--destructive);
+      background: color-mix(in srgb, var(--destructive) 12%, transparent);
+    }
+    #dae-ui-high-fidelity .empty-drop { color: var(--muted-foreground); }
+    #dae-ui-high-fidelity .subscription-nodes { display: none; margin-top: 9px; padding-top: 8px; border-top: 1px solid var(--border); }
+    #dae-ui-high-fidelity .subscription-nodes.is-open { display: grid; gap: 6px; }
+    #dae-ui-high-fidelity .preview-node { justify-content: space-between; gap: 8px; }
+    #dae-ui-high-fidelity .toast {
+      display: none;
+      margin-bottom: 14px;
+      padding: 10px 12px;
+      border-left: 3px solid var(--dae-accent);
+      background: color-mix(in srgb, var(--dae-accent) 9%, transparent);
+    }
+    #dae-ui-high-fidelity .toast.is-visible { display: block; }
+
+    #dae-ui-high-fidelity dialog {
+      color: var(--foreground);
+      background: var(--popover);
+      border: 1px solid var(--border);
+      width: min(760px, calc(100% - 28px));
+      max-width: 760px;
+      max-height: calc(100dvh - 32px);
+      padding: 0;
+      overflow: hidden;
+      border-radius: 12px;
+      box-shadow: 0 4px 16px -4px oklch(0.3 0.02 60 / 0.22), 0 18px 50px -12px oklch(0.3 0.02 60 / 0.28);
+    }
+    #dae-ui-high-fidelity dialog::backdrop {
+      background: light-dark(oklch(0.18 0.02 60 / 0.48), oklch(0.02 0.005 60 / 0.68));
+      backdrop-filter: blur(3px);
+    }
+    #dae-ui-high-fidelity dialog.wide-modal { width: min(980px, calc(100% - 28px)); max-width: 980px; }
+    #dae-ui-high-fidelity .modal-content {
+      display: block;
+      padding: 18px;
+      max-height: calc(100dvh - 32px);
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      scrollbar-gutter: stable;
+      background: var(--popover);
+      color: var(--popover-foreground);
+      border-radius: inherit;
+    }
+    #dae-ui-high-fidelity .modal-head {
+      position: sticky;
+      top: -18px;
+      z-index: 3;
+      justify-content: space-between;
+      gap: 12px;
+      margin: -18px -18px 14px;
+      padding: 18px;
+      background: var(--popover);
+      border-bottom: 1px solid var(--border);
+    }
+    #dae-ui-high-fidelity .modal-head h2 { margin: 0; }
+    #dae-ui-high-fidelity .tabs { gap: 5px; margin-bottom: 14px; flex-wrap: wrap; }
+    #dae-ui-high-fidelity .tab-panel { display: none; }
+    #dae-ui-high-fidelity .tab-panel.is-active { display: block; }
+    #dae-ui-high-fidelity .tab-button[aria-selected=&quot;true&quot;] { color: var(--primary-foreground); background: var(--primary); }
+    #dae-ui-high-fidelity .form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    #dae-ui-high-fidelity .form-grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    #dae-ui-high-fidelity .form-span { grid-column: 1 / -1; }
+    #dae-ui-high-fidelity .form-section { margin-top: 16px; padding-top: 13px; border-top: 1px solid var(--border); }
+    #dae-ui-high-fidelity .form-section h3 { margin: 0 0 11px; }
+    #dae-ui-high-fidelity .form-actions {
+      position: sticky;
+      bottom: -18px;
+      z-index: 3;
+      justify-content: flex-end;
+      gap: 8px;
+      margin: 16px -18px -18px;
+      padding: 12px 18px;
+      background: var(--popover);
+      border-top: 1px solid var(--border);
+    }
+    #dae-ui-high-fidelity .switch-row { justify-content: space-between; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--border); }
+    #dae-ui-high-fidelity textarea.code-editor { min-height: 270px; resize: vertical; font-family: ui-monospace, monospace; }
+    #dae-ui-high-fidelity .rule-list { display: grid; gap: 8px; }
+    #dae-ui-high-fidelity .rule-row { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(120px, .45fr); gap: 8px; align-items: center; }
+    #dae-ui-high-fidelity .upstream-row { display: grid; grid-template-columns: minmax(100px, .35fr) minmax(0, 1fr) auto; gap: 8px; align-items: center; }
+    #dae-ui-high-fidelity .regex-preview { margin-top: 12px; padding-top: 11px; border-top: 1px solid var(--border); }
+    #dae-ui-high-fidelity .regex-results { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+    #dae-ui-high-fidelity .picker-intro { display: grid; gap: 3px; }
+    #dae-ui-high-fidelity .picker-search { margin-bottom: 12px; }
+    #dae-ui-high-fidelity .picker-list { display: grid; gap: 2px; }
+    #dae-ui-high-fidelity .picker-option {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      gap: 10px;
+      align-items: start;
+      padding: 10px 6px;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+    }
+    #dae-ui-high-fidelity .picker-option:hover,
+    #dae-ui-high-fidelity .picker-option.is-selected { background: var(--accent); }
+    #dae-ui-high-fidelity .picker-option-copy { display: grid; gap: 3px; min-width: 0; }
+    #dae-ui-high-fidelity .picker-option-title { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 500; }
+    #dae-ui-high-fidelity .picker-option-meta { color: var(--muted-foreground); }
+    #dae-ui-high-fidelity .picker-empty { padding: 28px 6px; text-align: center; color: var(--muted-foreground); }
+    #dae-ui-high-fidelity .picker-section { margin-top: 15px; padding-top: 13px; border-top: 1px solid var(--border); }
+    #dae-ui-high-fidelity .picker-section h3 { margin: 0 0 4px; }
+    #dae-ui-high-fidelity .picker-hint { margin: 5px 0 0; color: var(--muted-foreground); }
+    #dae-ui-high-fidelity .picker-error { min-height: 18px; margin-top: 5px; }
+    #dae-ui-high-fidelity .picker-preview-head { display: flex; justify-content: space-between; gap: 10px; align-items: start; }
+    #dae-ui-high-fidelity .picker-preview-groups { display: grid; gap: 11px; margin-top: 11px; }
+    #dae-ui-high-fidelity .picker-preview-group { padding-top: 10px; border-top: 1px solid var(--border); }
+    #dae-ui-high-fidelity .picker-preview-group:first-child { padding-top: 0; border-top: 0; }
+    #dae-ui-high-fidelity .picker-preview-title { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+    #dae-ui-high-fidelity .picker-preview-nodes { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+
+    @media (max-width: 980px) {
+      #dae-ui-high-fidelity .workspace { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      #dae-ui-high-fidelity .form-grid.three { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 640px) {
+      #dae-ui-high-fidelity { padding: 10px; }
+      #dae-ui-high-fidelity .appbar { align-items: flex-start; }
+      #dae-ui-high-fidelity .workspace,
+      #dae-ui-high-fidelity .form-grid,
+      #dae-ui-high-fidelity .form-grid.three,
+      #dae-ui-high-fidelity .config-summary { grid-template-columns: 1fr; }
+      #dae-ui-high-fidelity .rule-row,
+      #dae-ui-high-fidelity .upstream-row { grid-template-columns: 1fr; }
+      #dae-ui-high-fidelity .picker-option { grid-template-columns: auto minmax(0, 1fr); }
+      #dae-ui-high-fidelity .picker-option &gt; .viz-badge { grid-column: 2; justify-self: start; }
+      #dae-ui-high-fidelity .app-actions .optional-label { display: none; }
+    }
+  &lt;/style&gt;
+
+  &lt;header class=&quot;appbar&quot;&gt;
+    &lt;div class=&quot;brand&quot;&gt;
+      &lt;div class=&quot;brand-mark&quot;&gt;&lt;i data-lucide=&quot;waves&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;/div&gt;
+      &lt;div class=&quot;brand-copy&quot;&gt;
+        &lt;div class=&quot;brand-line&quot;&gt;&lt;span&gt;DAE&lt;/span&gt;&lt;span class=&quot;viz-badge&quot;&gt;LuCI&lt;/span&gt;&lt;span class=&quot;viz-badge app-version&quot;&gt;加载中&lt;/span&gt;&lt;/div&gt;
+        &lt;span class=&quot;text-small text-muted&quot;&gt;直接管理 dae 配置文件&lt;/span&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;app-actions&quot;&gt;
+      &lt;span class=&quot;text-small service-status&quot;&gt;&lt;span class=&quot;status-dot&quot;&gt;&lt;/span&gt;&lt;span class=&quot;service-status-text&quot;&gt;读取状态&lt;/span&gt;&lt;/span&gt;
+      &lt;span class=&quot;viz-badge unsaved&quot;&gt;有未保存修改&lt;/span&gt;
+      &lt;button type=&quot;button&quot; class=&quot;btn validate-action&quot;&gt;&lt;i data-lucide=&quot;check-check&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;span class=&quot;optional-label&quot;&gt;验证&lt;/span&gt;&lt;/button&gt;
+      &lt;button type=&quot;button&quot; class=&quot;btn btn-primary save-reload-action&quot;&gt;&lt;i data-lucide=&quot;rotate-cw&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;保存并重载&lt;/button&gt;
+    &lt;/div&gt;
+  &lt;/header&gt;
+
+  &lt;div class=&quot;toast text-small&quot; aria-live=&quot;polite&quot;&gt;&lt;/div&gt;
+
+  &lt;main class=&quot;workspace&quot; aria-label=&quot;DAE 配置管理高保真模型&quot;&gt;
+    &lt;section class=&quot;section config-section&quot;&gt;
+      &lt;div class=&quot;section-head&quot;&gt;&lt;div class=&quot;section-title&quot;&gt;&lt;i data-lucide=&quot;settings&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;span class=&quot;accent&quot;&gt;配置&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;
+      &lt;div class=&quot;stack&quot;&gt;
+        &lt;article class=&quot;card resource-card is-selected&quot;&gt;
+          &lt;div class=&quot;resource-head&quot;&gt;
+            &lt;div class=&quot;resource-title&quot;&gt;&lt;i data-lucide=&quot;circle-check&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;span&gt;default&lt;/span&gt;&lt;/div&gt;
+            &lt;div class=&quot;resource-actions&quot;&gt;&lt;button type=&quot;button&quot; class=&quot;btn btn-ghost icon-btn open-modal&quot; data-modal=&quot;config-modal&quot; aria-label=&quot;可视化编辑配置&quot;&gt;&lt;i data-lucide=&quot;sliders-horizontal&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;/button&gt;&lt;button type=&quot;button&quot; class=&quot;btn btn-ghost icon-btn open-modal&quot; data-modal=&quot;config-source-modal&quot; aria-label=&quot;编辑配置源码&quot;&gt;&lt;i data-lucide=&quot;code-2&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;/button&gt;&lt;/div&gt;
+          &lt;/div&gt;
+          &lt;div class=&quot;config-summary text-small&quot;&gt;
+            &lt;div class=&quot;summary-item&quot;&gt;&lt;span class=&quot;text-muted&quot;&gt;日志&lt;/span&gt;&lt;span&gt;warn&lt;/span&gt;&lt;/div&gt;
+            &lt;div class=&quot;summary-item&quot;&gt;&lt;span class=&quot;text-muted&quot;&gt;拨号模式&lt;/span&gt;&lt;span&gt;domain&lt;/span&gt;&lt;/div&gt;
+            &lt;div class=&quot;summary-item&quot;&gt;&lt;span class=&quot;text-muted&quot;&gt;LAN&lt;/span&gt;&lt;span&gt;br-lan&lt;/span&gt;&lt;/div&gt;
+            &lt;div class=&quot;summary-item&quot;&gt;&lt;span class=&quot;text-muted&quot;&gt;WAN&lt;/span&gt;&lt;span&gt;auto&lt;/span&gt;&lt;/div&gt;
+            &lt;div class=&quot;summary-item&quot;&gt;&lt;span class=&quot;text-muted&quot;&gt;检查间隔&lt;/span&gt;&lt;span&gt;600s&lt;/span&gt;&lt;/div&gt;
+            &lt;div class=&quot;summary-item&quot;&gt;&lt;span class=&quot;text-muted&quot;&gt;TLS&lt;/span&gt;&lt;span&gt;tls / chrome_auto&lt;/span&gt;&lt;/div&gt;
+          &lt;/div&gt;
+        &lt;/article&gt;
+      &lt;/div&gt;
+    &lt;/section&gt;
+
+    &lt;section class=&quot;section dns-section&quot;&gt;
+      &lt;div class=&quot;section-head&quot;&gt;&lt;div class=&quot;section-title&quot;&gt;&lt;i data-lucide=&quot;network&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;span class=&quot;accent&quot;&gt;DNS&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;
+      &lt;div class=&quot;stack&quot;&gt;
+        &lt;article class=&quot;card resource-card is-selected&quot;&gt;
+          &lt;div class=&quot;resource-head&quot;&gt;&lt;div class=&quot;resource-title&quot;&gt;&lt;i data-lucide=&quot;circle-check&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;span&gt;default&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;resource-actions&quot;&gt;&lt;button type=&quot;button&quot; class=&quot;btn btn-ghost icon-btn open-modal&quot; data-modal=&quot;dns-modal&quot; aria-label=&quot;编辑 DNS&quot;&gt;&lt;i data-lucide=&quot;sliders-horizontal&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;/button&gt;&lt;button type=&quot;button&quot; class=&quot;btn btn-ghost icon-btn duplicate-action&quot; aria-label=&quot;复制 DNS&quot;&gt;&lt;i data-lucide=&quot;copy&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;/button&gt;&lt;/div&gt;&lt;/div&gt;
+          &lt;div class=&quot;meta-row text-small&quot;&gt;&lt;span&gt;2 个上游&lt;/span&gt;&lt;span&gt;·&lt;/span&gt;&lt;span&gt;5 条路由规则&lt;/span&gt;&lt;/div&gt;
+        &lt;/article&gt;
+      &lt;/div&gt;
+    &lt;/section&gt;
+
+    &lt;section class=&quot;section routing-section&quot;&gt;
+      &lt;div class=&quot;section-head&quot;&gt;&lt;div class=&quot;section-title&quot;&gt;&lt;i data-lucide=&quot;map&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;span class=&quot;accent&quot;&gt;路由&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;
+      &lt;div class=&quot;stack&quot;&gt;
+        &lt;article class=&quot;card resource-card is-selected&quot;&gt;
+          &lt;div class=&quot;resource-head&quot;&gt;&lt;div class=&quot;resource-title&quot;&gt;&lt;i data-lucide=&quot;circle-check&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;span&gt;default&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;resource-actions&quot;&gt;&lt;button type=&quot;button&quot; class=&quot;btn btn-ghost icon-btn open-modal&quot; data-modal=&quot;routing-modal&quot; aria-label=&quot;编辑路由&quot;&gt;&lt;i data-lucide=&quot;sliders-horizontal&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;/button&gt;&lt;button type=&quot;button&quot; class=&quot;btn btn-ghost icon-btn duplicate-action&quot; aria-label=&quot;复制路由&quot;&gt;&lt;i data-lucide=&quot;copy&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;/button&gt;&lt;/div&gt;&lt;/div&gt;
+          &lt;div class=&quot;meta-row text-small&quot;&gt;&lt;span&gt;GFW 模式&lt;/span&gt;&lt;span&gt;·&lt;/span&gt;&lt;span&gt;fallback: proxy&lt;/span&gt;&lt;/div&gt;
+        &lt;/article&gt;
+      &lt;/div&gt;
+    &lt;/section&gt;
+
+    &lt;section class=&quot;section group-section&quot;&gt;
+      &lt;div class=&quot;section-head&quot;&gt;&lt;div class=&quot;section-title&quot;&gt;&lt;i data-lucide=&quot;layout-grid&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;span class=&quot;accent&quot;&gt;群组&lt;/span&gt;&lt;/div&gt;&lt;button type=&quot;button&quot; class=&quot;btn btn-ghost icon-btn open-modal&quot; data-modal=&quot;group-modal&quot; aria-label=&quot;新增群组&quot;&gt;&lt;i data-lucide=&quot;plus&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;/button&gt;&lt;/div&gt;
+      &lt;div class=&quot;stack group-stack&quot;&gt;
+        &lt;article class=&quot;card resource-card group-card&quot; data-group=&quot;Proxy&quot;&gt;
+          &lt;div class=&quot;resource-head&quot;&gt;&lt;div class=&quot;resource-title&quot;&gt;&lt;span&gt;Proxy&lt;/span&gt;&lt;span class=&quot;viz-badge&quot;&gt;min_moving_avg&lt;/span&gt;&lt;/div&gt;&lt;button type=&quot;button&quot; class=&quot;btn btn-ghost icon-btn open-modal&quot; data-modal=&quot;group-modal&quot; aria-label=&quot;编辑 Proxy 群组&quot;&gt;&lt;i data-lucide=&quot;sliders-horizontal&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;/button&gt;&lt;/div&gt;
+          &lt;div class=&quot;meta-row text-small&quot;&gt;&lt;span class=&quot;group-node-summary&quot;&gt;2 个节点&lt;/span&gt;&lt;span&gt;·&lt;/span&gt;&lt;span class=&quot;group-subscription-summary&quot;&gt;1 个订阅组&lt;/span&gt;&lt;/div&gt;
+          &lt;div class=&quot;group-zones&quot;&gt;
+            &lt;div class=&quot;group-zone&quot; data-group=&quot;Proxy&quot; data-accept=&quot;node&quot;&gt;
+              &lt;div class=&quot;group-zone-head text-small&quot;&gt;&lt;div class=&quot;group-zone-title&quot;&gt;&lt;span&gt;节点&lt;/span&gt;&lt;span class=&quot;viz-badge zone-count&quot;&gt;2&lt;/span&gt;&lt;/div&gt;&lt;button type=&quot;button&quot; class=&quot;btn btn-ghost group-picker-open&quot; data-picker=&quot;node&quot;&gt;&lt;i data-lucide=&quot;plus&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;添加节点&lt;/button&gt;&lt;/div&gt;
+              &lt;div class=&quot;group-items&quot;&gt;&lt;span class=&quot;group-badge text-small&quot; data-id=&quot;jp&quot;&gt;&lt;i data-lucide=&quot;grip-vertical&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;span class=&quot;group-name&quot;&gt;JP-Tokyo&lt;/span&gt;&lt;button type=&quot;button&quot; class=&quot;group-remove&quot; aria-label=&quot;从群组移除 JP-Tokyo&quot;&gt;&lt;i data-lucide=&quot;x&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;/button&gt;&lt;/span&gt;&lt;span class=&quot;group-badge text-small&quot; data-id=&quot;sg&quot;&gt;&lt;i data-lucide=&quot;grip-vertical&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;span class=&quot;group-name&quot;&gt;SG-Singapore&lt;/span&gt;&lt;button type=&quot;button&quot; class=&quot;group-remove&quot; aria-label=&quot;从群组移除 SG-Singapore&quot;&gt;&lt;i data-lucide=&quot;x&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;/button&gt;&lt;/span&gt;&lt;/div&gt;
+            &lt;/div&gt;
+            &lt;div class=&quot;group-zone&quot; data-group=&quot;Proxy&quot; data-accept=&quot;subscription&quot;&gt;
+              &lt;div class=&quot;group-zone-head text-small&quot;&gt;&lt;div class=&quot;group-zone-title&quot;&gt;&lt;span&gt;订阅组&lt;/span&gt;&lt;span class=&quot;viz-badge zone-count&quot;&gt;1&lt;/span&gt;&lt;/div&gt;&lt;button type=&quot;button&quot; class=&quot;btn btn-ghost group-picker-open&quot; data-picker=&quot;subscription&quot;&gt;&lt;i data-lucide=&quot;plus&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;添加订阅组&lt;/button&gt;&lt;/div&gt;
+              &lt;div class=&quot;group-items&quot;&gt;&lt;span class=&quot;group-badge text-small&quot; data-id=&quot;premium&quot;&gt;&lt;i data-lucide=&quot;grip-vertical&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;span class=&quot;group-name&quot;&gt;Premium&lt;/span&gt;&lt;span class=&quot;filter&quot;&gt;匹配 3 个节点 · /香港|日本|HK|JP/&lt;/span&gt;&lt;button type=&quot;button&quot; class=&quot;group-remove&quot; aria-label=&quot;从群组移除 Premium&quot;&gt;&lt;i data-lucide=&quot;x&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;/button&gt;&lt;/span&gt;&lt;/div&gt;
+            &lt;/div&gt;
+          &lt;/div&gt;
+        &lt;/article&gt;
+
+        &lt;article class=&quot;card resource-card group-card&quot; data-group=&quot;Gaming&quot;&gt;
+          &lt;div class=&quot;resource-head&quot;&gt;&lt;div class=&quot;resource-title&quot;&gt;&lt;span&gt;Gaming&lt;/span&gt;&lt;span class=&quot;viz-badge&quot;&gt;min&lt;/span&gt;&lt;/div&gt;&lt;button type=&quot;button&quot; class=&quot;btn btn-ghost icon-btn open-modal&quot; data-modal=&quot;group-modal&quot; aria-label=&quot;编辑 Gaming 群组&quot;&gt;&lt;i data-lucide=&quot;sliders-horizontal&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;/button&gt;&lt;/div&gt;
+          &lt;div class=&quot;meta-row text-small&quot;&gt;&lt;span class=&quot;group-node-summary&quot;&gt;0 个节点&lt;/span&gt;&lt;span&gt;·&lt;/span&gt;&lt;span class=&quot;group-subscription-summary&quot;&gt;0 个订阅组&lt;/span&gt;&lt;/div&gt;
+          &lt;div class=&quot;group-zones&quot;&gt;
+            &lt;div class=&quot;group-zone&quot; data-group=&quot;Gaming&quot; data-accept=&quot;node&quot;&gt;&lt;div class=&quot;group-zone-head text-small&quot;&gt;&lt;div class=&quot;group-zone-title&quot;&gt;&lt;span&gt;节点&lt;/span&gt;&lt;span class=&quot;viz-badge zone-count&quot;&gt;0&lt;/span&gt;&lt;/div&gt;&lt;button type=&quot;button&quot; class=&quot;btn btn-ghost group-picker-open&quot; data-picker=&quot;node&quot;&gt;&lt;i data-lucide=&quot;plus&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;添加节点&lt;/button&gt;&lt;/div&gt;&lt;div class=&quot;group-items&quot;&gt;&lt;span class=&quot;empty-drop text-small&quot;&gt;暂无内容，可拖入或点击添加&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;
+            &lt;div class=&quot;group-zone&quot; data-group=&quot;Gaming&quot; data-accept=&quot;subscription&quot;&gt;&lt;div class=&quot;group-zone-head text-small&quot;&gt;&lt;div class=&quot;group-zone-title&quot;&gt;&lt;span&gt;订阅组&lt;/span&gt;&lt;span class=&quot;viz-badge zone-count&quot;&gt;0&lt;/span&gt;&lt;/div&gt;&lt;button type=&quot;button&quot; class=&quot;btn btn-ghost group-picker-open&quot; data-picker=&quot;subscription&quot;&gt;&lt;i data-lucide=&quot;plus&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;添加订阅组&lt;/button&gt;&lt;/div&gt;&lt;div class=&quot;group-items&quot;&gt;&lt;span class=&quot;empty-drop text-small&quot;&gt;暂无内容，可拖入或点击添加&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;
+          &lt;/div&gt;
+        &lt;/article&gt;
+      &lt;/div&gt;
+    &lt;/section&gt;
+
+    &lt;section class=&quot;section node-section&quot;&gt;
+      &lt;div class=&quot;section-head&quot;&gt;&lt;div class=&quot;section-title&quot;&gt;&lt;i data-lucide=&quot;cloud&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;span class=&quot;accent&quot;&gt;节点&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;resource-actions&quot;&gt;&lt;button type=&quot;button&quot; class=&quot;btn btn-ghost icon-btn import-action&quot; aria-label=&quot;批量导入节点&quot;&gt;&lt;i data-lucide=&quot;file-input&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;/button&gt;&lt;button type=&quot;button&quot; class=&quot;btn btn-ghost icon-btn open-modal&quot; data-modal=&quot;node-modal&quot; aria-label=&quot;新增节点&quot;&gt;&lt;i data-lucide=&quot;cloud-upload&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;/button&gt;&lt;/div&gt;&lt;/div&gt;
+      &lt;div class=&quot;stack node-stack&quot;&gt;
+        &lt;article class=&quot;card resource-card draggable-resource&quot; draggable=&quot;true&quot; data-type=&quot;node&quot; data-id=&quot;jp&quot; data-name=&quot;JP-Tokyo-Premium&quot;&gt;
+          &lt;div class=&quot;resource-head&quot;&gt;&lt;div&gt;&lt;div class=&quot;resource-title&quot;&gt;&lt;i class=&quot;drag-grip&quot; data-lucide=&quot;grip-vertical&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;span class=&quot;viz-badge&quot;&gt;vmess&lt;/span&gt;&lt;span class=&quot;truncate&quot;&gt;JP-Tokyo-Premium&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;meta-row text-small&quot;&gt;&lt;span&gt;Tokyo-01&lt;/span&gt;&lt;span&gt;·&lt;/span&gt;&lt;span&gt;拖到群组&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;button type=&quot;button&quot; class=&quot;btn btn-ghost icon-btn open-modal&quot; data-modal=&quot;node-modal&quot; aria-label=&quot;编辑东京节点&quot;&gt;&lt;i data-lucide=&quot;pencil&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;/button&gt;&lt;/div&gt;
+        &lt;/article&gt;
+        &lt;article class=&quot;card resource-card draggable-resource&quot; draggable=&quot;true&quot; data-type=&quot;node&quot; data-id=&quot;sg&quot; data-name=&quot;SG-Singapore-Standard&quot;&gt;
+          &lt;div class=&quot;resource-head&quot;&gt;&lt;div&gt;&lt;div class=&quot;resource-title&quot;&gt;&lt;i class=&quot;drag-grip&quot; data-lucide=&quot;grip-vertical&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;span class=&quot;viz-badge&quot;&gt;trojan&lt;/span&gt;&lt;span class=&quot;truncate&quot;&gt;SG-Singapore-Standard&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;meta-row text-small&quot;&gt;&lt;span&gt;Singapore-02&lt;/span&gt;&lt;span&gt;·&lt;/span&gt;&lt;span&gt;拖到群组&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;button type=&quot;button&quot; class=&quot;btn btn-ghost icon-btn open-modal&quot; data-modal=&quot;node-modal&quot; aria-label=&quot;编辑新加坡节点&quot;&gt;&lt;i data-lucide=&quot;pencil&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;/button&gt;&lt;/div&gt;
+        &lt;/article&gt;
+        &lt;article class=&quot;card resource-card draggable-resource&quot; draggable=&quot;true&quot; data-type=&quot;node&quot; data-id=&quot;hk&quot; data-name=&quot;HK-HongKong-IPLC&quot;&gt;
+          &lt;div class=&quot;resource-head&quot;&gt;&lt;div&gt;&lt;div class=&quot;resource-title&quot;&gt;&lt;i class=&quot;drag-grip&quot; data-lucide=&quot;grip-vertical&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;span class=&quot;viz-badge&quot;&gt;hysteria2&lt;/span&gt;&lt;span class=&quot;truncate&quot;&gt;HK-HongKong-IPLC&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;meta-row text-small&quot;&gt;&lt;span&gt;HongKong-03&lt;/span&gt;&lt;span&gt;·&lt;/span&gt;&lt;span&gt;拖到群组&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;button type=&quot;button&quot; class=&quot;btn btn-ghost icon-btn open-modal&quot; data-modal=&quot;node-modal&quot; aria-label=&quot;编辑香港节点&quot;&gt;&lt;i data-lucide=&quot;pencil&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;/button&gt;&lt;/div&gt;
+        &lt;/article&gt;
+      &lt;/div&gt;
+    &lt;/section&gt;
+
+    &lt;section class=&quot;section subscription-section&quot;&gt;
+      &lt;div class=&quot;section-head&quot;&gt;&lt;div class=&quot;section-title&quot;&gt;&lt;i data-lucide=&quot;cloud-cog&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;span class=&quot;accent&quot;&gt;订阅&lt;/span&gt;&lt;/div&gt;&lt;button type=&quot;button&quot; class=&quot;btn btn-ghost icon-btn open-modal&quot; data-modal=&quot;subscription-modal&quot; aria-label=&quot;新增订阅&quot;&gt;&lt;i data-lucide=&quot;cloud-upload&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;/button&gt;&lt;/div&gt;
+      &lt;div class=&quot;stack subscription-stack&quot;&gt;
+        &lt;article class=&quot;card resource-card draggable-resource&quot; draggable=&quot;true&quot; data-type=&quot;subscription&quot; data-id=&quot;premium&quot; data-name=&quot;Premium Provider&quot;&gt;
+          &lt;div class=&quot;resource-head&quot;&gt;&lt;div&gt;&lt;div class=&quot;resource-title&quot;&gt;&lt;i class=&quot;drag-grip&quot; data-lucide=&quot;grip-vertical&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;span class=&quot;viz-badge&quot;&gt;12 节点&lt;/span&gt;&lt;span class=&quot;truncate&quot;&gt;Premium Provider&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;meta-row text-small&quot;&gt;&lt;span&gt;每天 04:17&lt;/span&gt;&lt;span&gt;·&lt;/span&gt;&lt;span&gt;刚刚更新&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;resource-actions&quot;&gt;&lt;button type=&quot;button&quot; class=&quot;btn btn-ghost icon-btn open-modal&quot; data-modal=&quot;subscription-modal&quot; aria-label=&quot;编辑 Premium Provider&quot;&gt;&lt;i data-lucide=&quot;pencil&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;/button&gt;&lt;button type=&quot;button&quot; class=&quot;btn btn-ghost icon-btn subscription-toggle&quot; aria-label=&quot;显示订阅节点&quot;&gt;&lt;i data-lucide=&quot;chevron-down&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;/button&gt;&lt;/div&gt;&lt;/div&gt;
+          &lt;div class=&quot;subscription-nodes text-small&quot;&gt;&lt;div class=&quot;preview-node&quot;&gt;&lt;span&gt;JP-Tokyo-Premium&lt;/span&gt;&lt;span class=&quot;viz-badge&quot;&gt;vmess&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;preview-node&quot;&gt;&lt;span&gt;SG-Singapore-Standard&lt;/span&gt;&lt;span class=&quot;viz-badge&quot;&gt;trojan&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;preview-node&quot;&gt;&lt;span&gt;HK-HongKong-IPLC&lt;/span&gt;&lt;span class=&quot;viz-badge&quot;&gt;hysteria2&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;
+        &lt;/article&gt;
+        &lt;article class=&quot;card resource-card draggable-resource&quot; draggable=&quot;true&quot; data-type=&quot;subscription&quot; data-id=&quot;backup&quot; data-name=&quot;Backup Provider&quot;&gt;
+          &lt;div class=&quot;resource-head&quot;&gt;&lt;div&gt;&lt;div class=&quot;resource-title&quot;&gt;&lt;i class=&quot;drag-grip&quot; data-lucide=&quot;grip-vertical&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;span class=&quot;viz-badge&quot;&gt;5 节点&lt;/span&gt;&lt;span class=&quot;truncate&quot;&gt;Backup Provider&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;meta-row text-small&quot;&gt;&lt;span&gt;每周一 03:20&lt;/span&gt;&lt;span&gt;·&lt;/span&gt;&lt;span&gt;2 小时前更新&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;resource-actions&quot;&gt;&lt;button type=&quot;button&quot; class=&quot;btn btn-ghost icon-btn open-modal&quot; data-modal=&quot;subscription-modal&quot; aria-label=&quot;编辑 Backup Provider&quot;&gt;&lt;i data-lucide=&quot;pencil&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;/button&gt;&lt;button type=&quot;button&quot; class=&quot;btn btn-ghost icon-btn subscription-toggle&quot; aria-label=&quot;显示订阅节点&quot;&gt;&lt;i data-lucide=&quot;chevron-down&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;/button&gt;&lt;/div&gt;&lt;/div&gt;
+          &lt;div class=&quot;subscription-nodes text-small&quot;&gt;&lt;div class=&quot;preview-node&quot;&gt;&lt;span&gt;US-LosAngeles-BGP&lt;/span&gt;&lt;span class=&quot;viz-badge&quot;&gt;vless&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;preview-node&quot;&gt;&lt;span&gt;DE-Frankfurt&lt;/span&gt;&lt;span class=&quot;viz-badge&quot;&gt;shadowsocks&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;
+        &lt;/article&gt;
+      &lt;/div&gt;
+    &lt;/section&gt;
+  &lt;/main&gt;
+
+  &lt;dialog id=&quot;config-modal&quot; class=&quot;wide-modal card&quot;&gt;
+    &lt;form method=&quot;dialog&quot; class=&quot;modal-content&quot;&gt;
+      &lt;div class=&quot;modal-head&quot;&gt;&lt;div&gt;&lt;h2&gt;全局配置&lt;/h2&gt;&lt;span class=&quot;text-small text-muted&quot;&gt;可视化编辑 /etc/dae/config.dae&lt;/span&gt;&lt;/div&gt;&lt;button value=&quot;cancel&quot; class=&quot;btn btn-ghost icon-btn&quot; aria-label=&quot;关闭&quot;&gt;&lt;i data-lucide=&quot;x&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;/button&gt;&lt;/div&gt;
+      &lt;div class=&quot;form-section&quot;&gt;&lt;h3&gt;软件选项&lt;/h3&gt;&lt;div class=&quot;form-grid three&quot;&gt;&lt;label class=&quot;form-label&quot;&gt;日志级别&lt;select class=&quot;form-select&quot;&gt;&lt;option&gt;error&lt;/option&gt;&lt;option selected&gt;warn&lt;/option&gt;&lt;option&gt;info&lt;/option&gt;&lt;option&gt;debug&lt;/option&gt;&lt;option&gt;trace&lt;/option&gt;&lt;/select&gt;&lt;/label&gt;&lt;label class=&quot;form-label&quot;&gt;透明代理端口&lt;input class=&quot;form-control&quot; value=&quot;12345&quot;&gt;&lt;/label&gt;&lt;label class=&quot;form-label&quot;&gt;SO_MARK&lt;input class=&quot;form-control&quot; value=&quot;0&quot;&gt;&lt;/label&gt;&lt;label class=&quot;form-label&quot;&gt;pprof 端口&lt;input class=&quot;form-control&quot; value=&quot;0&quot;&gt;&lt;/label&gt;&lt;label class=&quot;form-label&quot;&gt;嗅探超时&lt;input class=&quot;form-control&quot; value=&quot;300ms&quot;&gt;&lt;/label&gt;&lt;label class=&quot;form-label&quot;&gt;拨号模式&lt;select class=&quot;form-select&quot;&gt;&lt;option selected&gt;domain&lt;/option&gt;&lt;option&gt;ip&lt;/option&gt;&lt;option&gt;domain+&lt;/option&gt;&lt;/select&gt;&lt;/label&gt;&lt;/div&gt;&lt;/div&gt;
+      &lt;div class=&quot;form-section&quot;&gt;&lt;h3&gt;接口与内核&lt;/h3&gt;&lt;div class=&quot;form-grid&quot;&gt;&lt;label class=&quot;form-label&quot;&gt;LAN 接口&lt;input class=&quot;form-control&quot; value=&quot;br-lan&quot;&gt;&lt;/label&gt;&lt;label class=&quot;form-label&quot;&gt;WAN 接口&lt;input class=&quot;form-control&quot; value=&quot;auto&quot;&gt;&lt;/label&gt;&lt;/div&gt;&lt;div class=&quot;switch-row&quot;&gt;&lt;span&gt;透明代理端口保护&lt;/span&gt;&lt;label class=&quot;form-check form-switch&quot;&gt;&lt;input class=&quot;form-check-input&quot; type=&quot;checkbox&quot; checked&gt;&lt;span class=&quot;form-check-label&quot;&gt;启用&lt;/span&gt;&lt;/label&gt;&lt;/div&gt;&lt;div class=&quot;switch-row&quot;&gt;&lt;span&gt;自动配置内核参数&lt;/span&gt;&lt;label class=&quot;form-check form-switch&quot;&gt;&lt;input class=&quot;form-check-input&quot; type=&quot;checkbox&quot; checked&gt;&lt;span class=&quot;form-check-label&quot;&gt;启用&lt;/span&gt;&lt;/label&gt;&lt;/div&gt;&lt;div class=&quot;switch-row&quot;&gt;&lt;span&gt;本地 TCP 快速重定向&lt;/span&gt;&lt;label class=&quot;form-check form-switch&quot;&gt;&lt;input class=&quot;form-check-input&quot; type=&quot;checkbox&quot;&gt;&lt;span class=&quot;form-check-label&quot;&gt;关闭&lt;/span&gt;&lt;/label&gt;&lt;/div&gt;&lt;div class=&quot;switch-row&quot;&gt;&lt;span&gt;MPTCP&lt;/span&gt;&lt;label class=&quot;form-check form-switch&quot;&gt;&lt;input class=&quot;form-check-input&quot; type=&quot;checkbox&quot;&gt;&lt;span class=&quot;form-check-label&quot;&gt;关闭&lt;/span&gt;&lt;/label&gt;&lt;/div&gt;&lt;/div&gt;
+      &lt;div class=&quot;form-section&quot;&gt;&lt;h3&gt;连通性检查&lt;/h3&gt;&lt;div class=&quot;form-grid three&quot;&gt;&lt;label class=&quot;form-label&quot;&gt;检查间隔&lt;input class=&quot;form-control&quot; value=&quot;600s&quot;&gt;&lt;/label&gt;&lt;label class=&quot;form-label&quot;&gt;检查容差&lt;input class=&quot;form-control&quot; value=&quot;20ms&quot;&gt;&lt;/label&gt;&lt;label class=&quot;form-label&quot;&gt;TCP 方法&lt;select class=&quot;form-select&quot;&gt;&lt;option selected&gt;HEAD&lt;/option&gt;&lt;option&gt;GET&lt;/option&gt;&lt;/select&gt;&lt;/label&gt;&lt;label class=&quot;form-label form-span&quot;&gt;TCP 检测地址&lt;input class=&quot;form-control&quot; value=&quot;http://cp.cloudflare.com,1.1.1.1&quot;&gt;&lt;/label&gt;&lt;label class=&quot;form-label form-span&quot;&gt;UDP 检测 DNS&lt;input class=&quot;form-control&quot; value=&quot;dns.google:53,8.8.8.8&quot;&gt;&lt;/label&gt;&lt;/div&gt;&lt;/div&gt;
+      &lt;div class=&quot;form-section&quot;&gt;&lt;h3&gt;TLS、DNS 与带宽&lt;/h3&gt;&lt;div class=&quot;form-grid three&quot;&gt;&lt;label class=&quot;form-label&quot;&gt;TLS 实现&lt;select class=&quot;form-select&quot;&gt;&lt;option selected&gt;tls&lt;/option&gt;&lt;option&gt;utls&lt;/option&gt;&lt;/select&gt;&lt;/label&gt;&lt;label class=&quot;form-label&quot;&gt;uTLS 指纹&lt;select class=&quot;form-select&quot;&gt;&lt;option selected&gt;chrome_auto&lt;/option&gt;&lt;option&gt;firefox_auto&lt;/option&gt;&lt;option&gt;safari_auto&lt;/option&gt;&lt;/select&gt;&lt;/label&gt;&lt;label class=&quot;form-label&quot;&gt;Bootstrap Resolver&lt;input class=&quot;form-control&quot; value=&quot;223.5.5.5:53&quot;&gt;&lt;/label&gt;&lt;label class=&quot;form-label&quot;&gt;Fallback Resolver&lt;input class=&quot;form-control&quot; value=&quot;8.8.8.8:53&quot;&gt;&lt;/label&gt;&lt;label class=&quot;form-label&quot;&gt;最大上传&lt;input class=&quot;form-control&quot; value=&quot;200 mbps&quot;&gt;&lt;/label&gt;&lt;label class=&quot;form-label&quot;&gt;最大下载&lt;input class=&quot;form-control&quot; value=&quot;1 gbps&quot;&gt;&lt;/label&gt;&lt;/div&gt;&lt;div class=&quot;switch-row&quot;&gt;&lt;span&gt;允许不安全 TLS&lt;/span&gt;&lt;label class=&quot;form-check form-switch&quot;&gt;&lt;input class=&quot;form-check-input&quot; type=&quot;checkbox&quot; checked&gt;&lt;span class=&quot;form-check-label&quot;&gt;启用&lt;/span&gt;&lt;/label&gt;&lt;/div&gt;&lt;div class=&quot;switch-row&quot;&gt;&lt;span&gt;禁用等待网络&lt;/span&gt;&lt;label class=&quot;form-check form-switch&quot;&gt;&lt;input class=&quot;form-check-input&quot; type=&quot;checkbox&quot;&gt;&lt;span class=&quot;form-check-label&quot;&gt;关闭&lt;/span&gt;&lt;/label&gt;&lt;/div&gt;&lt;/div&gt;
+      &lt;div class=&quot;form-actions&quot;&gt;&lt;button value=&quot;cancel&quot; class=&quot;btn&quot;&gt;取消&lt;/button&gt;&lt;button value=&quot;default&quot; class=&quot;btn btn-primary modal-save&quot; data-label=&quot;全局配置&quot;&gt;保存修改&lt;/button&gt;&lt;/div&gt;
+    &lt;/form&gt;
+  &lt;/dialog&gt;
+
+  &lt;dialog id=&quot;config-source-modal&quot; class=&quot;card&quot;&gt;
+    &lt;form method=&quot;dialog&quot; class=&quot;modal-content&quot;&gt;&lt;div class=&quot;modal-head&quot;&gt;&lt;div&gt;&lt;h2&gt;配置源码&lt;/h2&gt;&lt;span class=&quot;text-small text-muted&quot;&gt;/etc/dae/config.dae&lt;/span&gt;&lt;/div&gt;&lt;button value=&quot;cancel&quot; class=&quot;btn btn-ghost icon-btn&quot; aria-label=&quot;关闭&quot;&gt;&lt;i data-lucide=&quot;x&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;/button&gt;&lt;/div&gt;&lt;textarea class=&quot;form-control code-editor&quot;&gt;include {
+  config.d/*.dae
+}
+global {
+  log_level: warn
+  lan_interface: &quot;br-lan&quot;
+  wan_interface: auto
+  check_interval: 600s
+  dial_mode: domain
+  allow_insecure: true
+}&lt;/textarea&gt;&lt;div class=&quot;form-actions&quot;&gt;&lt;button value=&quot;cancel&quot; class=&quot;btn&quot;&gt;取消&lt;/button&gt;&lt;button value=&quot;default&quot; class=&quot;btn btn-primary modal-save&quot; data-label=&quot;配置源码&quot;&gt;验证并保存&lt;/button&gt;&lt;/div&gt;&lt;/form&gt;
+  &lt;/dialog&gt;
+
+  &lt;dialog id=&quot;dns-modal&quot; class=&quot;wide-modal card&quot;&gt;
+    &lt;form method=&quot;dialog&quot; class=&quot;modal-content&quot;&gt;&lt;div class=&quot;modal-head&quot;&gt;&lt;div&gt;&lt;h2&gt;DNS 配置&lt;/h2&gt;&lt;span class=&quot;text-small text-muted&quot;&gt;可视化与源码模式可随时切换&lt;/span&gt;&lt;/div&gt;&lt;button value=&quot;cancel&quot; class=&quot;btn btn-ghost icon-btn&quot; aria-label=&quot;关闭&quot;&gt;&lt;i data-lucide=&quot;x&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;/button&gt;&lt;/div&gt;&lt;div class=&quot;tabs&quot; role=&quot;tablist&quot;&gt;&lt;button type=&quot;button&quot; class=&quot;btn tab-button&quot; data-tab=&quot;dns-visual&quot; aria-selected=&quot;true&quot;&gt;可视化模式&lt;/button&gt;&lt;button type=&quot;button&quot; class=&quot;btn tab-button&quot; data-tab=&quot;dns-source&quot; aria-selected=&quot;false&quot;&gt;源码模式&lt;/button&gt;&lt;/div&gt;&lt;div id=&quot;dns-visual&quot; class=&quot;tab-panel is-active&quot;&gt;&lt;div class=&quot;form-section&quot;&gt;&lt;h3&gt;上游 DNS&lt;/h3&gt;&lt;div class=&quot;rule-list&quot;&gt;&lt;div class=&quot;upstream-row&quot;&gt;&lt;input class=&quot;form-control&quot; value=&quot;alidns&quot;&gt;&lt;input class=&quot;form-control&quot; value=&quot;udp://223.5.5.5:53&quot;&gt;&lt;button type=&quot;button&quot; class=&quot;btn btn-ghost icon-btn&quot; aria-label=&quot;删除上游&quot;&gt;&lt;i data-lucide=&quot;trash-2&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;/button&gt;&lt;/div&gt;&lt;div class=&quot;upstream-row&quot;&gt;&lt;input class=&quot;form-control&quot; value=&quot;googledns&quot;&gt;&lt;input class=&quot;form-control&quot; value=&quot;tcp+udp://8.8.8.8:53&quot;&gt;&lt;button type=&quot;button&quot; class=&quot;btn btn-ghost icon-btn&quot; aria-label=&quot;删除上游&quot;&gt;&lt;i data-lucide=&quot;trash-2&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;/button&gt;&lt;/div&gt;&lt;/div&gt;&lt;button type=&quot;button&quot; class=&quot;btn add-row-action&quot;&gt;&lt;i data-lucide=&quot;plus&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;添加上游&lt;/button&gt;&lt;/div&gt;&lt;div class=&quot;form-section&quot;&gt;&lt;h3&gt;请求路由&lt;/h3&gt;&lt;div class=&quot;rule-list&quot;&gt;&lt;div class=&quot;rule-row&quot;&gt;&lt;input class=&quot;form-control&quot; value=&quot;qname(geosite:cn)&quot;&gt;&lt;span&gt;→&lt;/span&gt;&lt;select class=&quot;form-select&quot;&gt;&lt;option selected&gt;alidns&lt;/option&gt;&lt;option&gt;googledns&lt;/option&gt;&lt;option&gt;reject&lt;/option&gt;&lt;/select&gt;&lt;/div&gt;&lt;div class=&quot;rule-row&quot;&gt;&lt;input class=&quot;form-control&quot; value=&quot;fallback&quot;&gt;&lt;span&gt;→&lt;/span&gt;&lt;select class=&quot;form-select&quot;&gt;&lt;option&gt;alidns&lt;/option&gt;&lt;option selected&gt;googledns&lt;/option&gt;&lt;/select&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;form-section&quot;&gt;&lt;h3&gt;响应路由&lt;/h3&gt;&lt;div class=&quot;rule-list&quot;&gt;&lt;div class=&quot;rule-row&quot;&gt;&lt;input class=&quot;form-control&quot; value=&quot;ip(geoip:cn)&quot;&gt;&lt;span&gt;→&lt;/span&gt;&lt;select class=&quot;form-select&quot;&gt;&lt;option selected&gt;accept&lt;/option&gt;&lt;option&gt;googledns&lt;/option&gt;&lt;/select&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div id=&quot;dns-source&quot; class=&quot;tab-panel&quot;&gt;&lt;textarea class=&quot;form-control code-editor&quot;&gt;dns {
+  upstream {
+    alidns: &#x27;udp://223.5.5.5:53&#x27;
+    googledns: &#x27;tcp+udp://8.8.8.8:53&#x27;
+  }
+  routing {
+    request {
+      qname(geosite:cn) -&gt; alidns
+      fallback: googledns
+    }
+  }
+}&lt;/textarea&gt;&lt;/div&gt;&lt;div class=&quot;form-actions&quot;&gt;&lt;button value=&quot;cancel&quot; class=&quot;btn&quot;&gt;取消&lt;/button&gt;&lt;button value=&quot;default&quot; class=&quot;btn btn-primary modal-save&quot; data-label=&quot;DNS 配置&quot;&gt;验证并保存&lt;/button&gt;&lt;/div&gt;&lt;/form&gt;
+  &lt;/dialog&gt;
+
+  &lt;dialog id=&quot;routing-modal&quot; class=&quot;wide-modal card&quot;&gt;
+    &lt;form method=&quot;dialog&quot; class=&quot;modal-content&quot;&gt;&lt;div class=&quot;modal-head&quot;&gt;&lt;div&gt;&lt;h2&gt;路由配置&lt;/h2&gt;&lt;span class=&quot;text-small text-muted&quot;&gt;简单模板和高级源码模式&lt;/span&gt;&lt;/div&gt;&lt;button value=&quot;cancel&quot; class=&quot;btn btn-ghost icon-btn&quot; aria-label=&quot;关闭&quot;&gt;&lt;i data-lucide=&quot;x&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;/button&gt;&lt;/div&gt;&lt;div class=&quot;tabs&quot; role=&quot;tablist&quot;&gt;&lt;button type=&quot;button&quot; class=&quot;btn tab-button&quot; data-tab=&quot;routing-simple&quot; aria-selected=&quot;true&quot;&gt;简单模式&lt;/button&gt;&lt;button type=&quot;button&quot; class=&quot;btn tab-button&quot; data-tab=&quot;routing-source&quot; aria-selected=&quot;false&quot;&gt;高级模式&lt;/button&gt;&lt;/div&gt;&lt;div id=&quot;routing-simple&quot; class=&quot;tab-panel is-active&quot;&gt;&lt;div class=&quot;form-grid&quot;&gt;&lt;label class=&quot;form-label&quot;&gt;代理模式&lt;select class=&quot;form-select&quot;&gt;&lt;option selected&gt;GFW 列表&lt;/option&gt;&lt;option&gt;绕过中国大陆&lt;/option&gt;&lt;option&gt;仅代理中国大陆&lt;/option&gt;&lt;option&gt;全局代理&lt;/option&gt;&lt;option&gt;仅 MAC 控制&lt;/option&gt;&lt;/select&gt;&lt;/label&gt;&lt;label class=&quot;form-label&quot;&gt;代理群组&lt;select class=&quot;form-select&quot;&gt;&lt;option selected&gt;Proxy&lt;/option&gt;&lt;option&gt;Gaming&lt;/option&gt;&lt;/select&gt;&lt;/label&gt;&lt;label class=&quot;form-label&quot;&gt;MAC 地址控制&lt;select class=&quot;form-select&quot;&gt;&lt;option selected&gt;关闭&lt;/option&gt;&lt;option&gt;指定设备代理&lt;/option&gt;&lt;option&gt;指定设备直连&lt;/option&gt;&lt;/select&gt;&lt;/label&gt;&lt;label class=&quot;form-label&quot;&gt;QUIC 处理&lt;select class=&quot;form-select&quot;&gt;&lt;option selected&gt;阻止 UDP/443&lt;/option&gt;&lt;option&gt;允许&lt;/option&gt;&lt;/select&gt;&lt;/label&gt;&lt;/div&gt;&lt;div class=&quot;form-section&quot;&gt;&lt;h3&gt;生成规则预览&lt;/h3&gt;&lt;pre&gt;&lt;code&gt;pname(dnsmasq) -&gt; must_direct
+dip(geoip:private) -&gt; direct
+domain(geosite:gfw) -&gt; Proxy
+fallback: direct&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;&lt;div id=&quot;routing-source&quot; class=&quot;tab-panel&quot;&gt;&lt;textarea class=&quot;form-control code-editor&quot;&gt;routing {
+  pname(dnsmasq, zerotier-one) -&gt; must_direct
+  dip(geoip:private) -&gt; direct
+  domain(geosite:gfw) -&gt; Proxy
+  fallback: direct
+}&lt;/textarea&gt;&lt;/div&gt;&lt;div class=&quot;form-actions&quot;&gt;&lt;button value=&quot;cancel&quot; class=&quot;btn&quot;&gt;取消&lt;/button&gt;&lt;button value=&quot;default&quot; class=&quot;btn btn-primary modal-save&quot; data-label=&quot;路由配置&quot;&gt;验证并保存&lt;/button&gt;&lt;/div&gt;&lt;/form&gt;
+  &lt;/dialog&gt;
+
+  &lt;dialog id=&quot;group-modal&quot; class=&quot;card&quot;&gt;
+    &lt;form method=&quot;dialog&quot; class=&quot;modal-content&quot;&gt;&lt;div class=&quot;modal-head&quot;&gt;&lt;div&gt;&lt;h2&gt;群组设置&lt;/h2&gt;&lt;span class=&quot;text-small text-muted&quot;&gt;保存到 /etc/dae/config.d/node.dae&lt;/span&gt;&lt;/div&gt;&lt;button value=&quot;cancel&quot; class=&quot;btn btn-ghost icon-btn&quot; aria-label=&quot;关闭&quot;&gt;&lt;i data-lucide=&quot;x&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;/button&gt;&lt;/div&gt;&lt;input type=&quot;hidden&quot; class=&quot;group-previous-id&quot;&gt;&lt;div class=&quot;form-grid&quot;&gt;&lt;label class=&quot;form-label&quot;&gt;群组名称&lt;input class=&quot;form-control group-id&quot; placeholder=&quot;例如 proxy&quot;&gt;&lt;/label&gt;&lt;label class=&quot;form-label&quot;&gt;策略&lt;select class=&quot;form-select group-policy&quot;&gt;&lt;option selected&gt;min_moving_avg&lt;/option&gt;&lt;option&gt;min&lt;/option&gt;&lt;option&gt;random&lt;/option&gt;&lt;option&gt;fixed&lt;/option&gt;&lt;/select&gt;&lt;/label&gt;&lt;label class=&quot;form-label form-span&quot;&gt;策略参数&lt;input class=&quot;form-control group-policy-param&quot; placeholder=&quot;fixed 策略可填写节点序号，例如 0&quot;&gt;&lt;/label&gt;&lt;/div&gt;&lt;div class=&quot;form-actions&quot;&gt;&lt;button type=&quot;button&quot; class=&quot;btn text-destructive group-delete&quot;&gt;删除群组&lt;/button&gt;&lt;button value=&quot;cancel&quot; class=&quot;btn&quot;&gt;取消&lt;/button&gt;&lt;button type=&quot;button&quot; class=&quot;btn btn-primary group-save&quot;&gt;保存群组&lt;/button&gt;&lt;/div&gt;&lt;/form&gt;
+  &lt;/dialog&gt;
+
+  &lt;dialog id=&quot;node-modal&quot; class=&quot;wide-modal card&quot;&gt;
+    &lt;form method=&quot;dialog&quot; class=&quot;modal-content&quot;&gt;&lt;div class=&quot;modal-head&quot;&gt;&lt;div&gt;&lt;h2&gt;节点配置&lt;/h2&gt;&lt;span class=&quot;text-small text-muted&quot;&gt;直接保存 dae 支持的分享链接&lt;/span&gt;&lt;/div&gt;&lt;button value=&quot;cancel&quot; class=&quot;btn btn-ghost icon-btn&quot; aria-label=&quot;关闭&quot;&gt;&lt;i data-lucide=&quot;x&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;/button&gt;&lt;/div&gt;&lt;input type=&quot;hidden&quot; class=&quot;node-previous-id&quot;&gt;&lt;div class=&quot;form-grid&quot;&gt;&lt;label class=&quot;form-label&quot;&gt;节点标签&lt;input class=&quot;form-control node-id&quot; placeholder=&quot;例如 s1-any&quot;&gt;&lt;/label&gt;&lt;label class=&quot;form-label form-span&quot;&gt;节点链接&lt;textarea class=&quot;form-control node-link&quot; rows=&quot;5&quot; placeholder=&quot;anytls://... 或 vmess://...&quot;&gt;&lt;/textarea&gt;&lt;/label&gt;&lt;/div&gt;&lt;div class=&quot;form-actions&quot;&gt;&lt;button type=&quot;button&quot; class=&quot;btn text-destructive node-delete&quot;&gt;删除节点&lt;/button&gt;&lt;button value=&quot;cancel&quot; class=&quot;btn&quot;&gt;取消&lt;/button&gt;&lt;button type=&quot;button&quot; class=&quot;btn btn-primary node-save&quot;&gt;保存节点&lt;/button&gt;&lt;/div&gt;&lt;/form&gt;
+  &lt;/dialog&gt;
+
+  &lt;dialog id=&quot;subscription-modal&quot; class=&quot;card&quot;&gt;
+    &lt;form method=&quot;dialog&quot; class=&quot;modal-content&quot;&gt;&lt;div class=&quot;modal-head&quot;&gt;&lt;div&gt;&lt;h2&gt;订阅设置&lt;/h2&gt;&lt;span class=&quot;text-small text-muted&quot;&gt;自动更新周期在“全局设置”中统一配置&lt;/span&gt;&lt;/div&gt;&lt;button value=&quot;cancel&quot; class=&quot;btn btn-ghost icon-btn&quot; aria-label=&quot;关闭&quot;&gt;&lt;i data-lucide=&quot;x&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;/button&gt;&lt;/div&gt;&lt;input type=&quot;hidden&quot; class=&quot;subscription-previous-id&quot;&gt;&lt;div class=&quot;form-grid&quot;&gt;&lt;label class=&quot;form-label&quot;&gt;订阅标签&lt;input class=&quot;form-control subscription-id&quot; placeholder=&quot;例如 premium&quot;&gt;&lt;/label&gt;&lt;label class=&quot;form-label form-span&quot;&gt;订阅地址&lt;input class=&quot;form-control subscription-link&quot; placeholder=&quot;https://example.com/subscription&quot;&gt;&lt;/label&gt;&lt;/div&gt;&lt;div class=&quot;form-actions&quot;&gt;&lt;button type=&quot;button&quot; class=&quot;btn text-destructive subscription-delete&quot;&gt;删除订阅&lt;/button&gt;&lt;button value=&quot;cancel&quot; class=&quot;btn&quot;&gt;取消&lt;/button&gt;&lt;button type=&quot;button&quot; class=&quot;btn btn-primary subscription-save&quot;&gt;保存订阅&lt;/button&gt;&lt;/div&gt;&lt;/form&gt;
+  &lt;/dialog&gt;
+
+  &lt;dialog id=&quot;group-node-picker-modal&quot; class=&quot;wide-modal card&quot;&gt;
+    &lt;div class=&quot;modal-content&quot;&gt;
+      &lt;div class=&quot;modal-head&quot;&gt;&lt;div class=&quot;picker-intro&quot;&gt;&lt;h2 class=&quot;node-picker-title&quot;&gt;添加节点到群组&lt;/h2&gt;&lt;span class=&quot;text-small text-muted node-picker-selected&quot;&gt;已选 0 项&lt;/span&gt;&lt;/div&gt;&lt;button type=&quot;button&quot; value=&quot;cancel&quot; class=&quot;btn btn-ghost icon-btn&quot; aria-label=&quot;关闭&quot;&gt;&lt;i data-lucide=&quot;x&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;/button&gt;&lt;/div&gt;
+      &lt;label class=&quot;form-label picker-search&quot;&gt;搜索节点&lt;input class=&quot;form-control node-picker-search&quot; placeholder=&quot;搜索节点名称、协议或来源&quot;&gt;&lt;/label&gt;
+      &lt;div class=&quot;picker-list node-picker-list&quot; aria-live=&quot;polite&quot;&gt;&lt;/div&gt;
+      &lt;div class=&quot;form-actions&quot;&gt;&lt;button type=&quot;button&quot; value=&quot;cancel&quot; class=&quot;btn&quot;&gt;取消&lt;/button&gt;&lt;button type=&quot;button&quot; class=&quot;btn btn-primary node-picker-confirm&quot; disabled&gt;添加所选节点&lt;/button&gt;&lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/dialog&gt;
+
+  &lt;dialog id=&quot;group-subscription-picker-modal&quot; class=&quot;wide-modal card&quot;&gt;
+    &lt;div class=&quot;modal-content&quot;&gt;
+      &lt;div class=&quot;modal-head&quot;&gt;&lt;div class=&quot;picker-intro&quot;&gt;&lt;h2 class=&quot;subscription-picker-title&quot;&gt;添加订阅组到群组&lt;/h2&gt;&lt;span class=&quot;text-small text-muted subscription-picker-selected&quot;&gt;已选 0 项&lt;/span&gt;&lt;/div&gt;&lt;button type=&quot;button&quot; value=&quot;cancel&quot; class=&quot;btn btn-ghost icon-btn&quot; aria-label=&quot;关闭&quot;&gt;&lt;i data-lucide=&quot;x&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;/button&gt;&lt;/div&gt;
+      &lt;label class=&quot;form-label picker-search&quot;&gt;搜索订阅组&lt;input class=&quot;form-control subscription-picker-search&quot; placeholder=&quot;搜索订阅组&quot;&gt;&lt;/label&gt;
+      &lt;div class=&quot;picker-list subscription-picker-list&quot; aria-live=&quot;polite&quot;&gt;&lt;/div&gt;
+      &lt;div class=&quot;picker-section&quot;&gt;
+        &lt;label class=&quot;form-label&quot;&gt;节点名称正则&lt;input class=&quot;form-control subscription-picker-regex&quot; placeholder=&quot;可选，留空则添加整个订阅组&quot;&gt;&lt;/label&gt;
+        &lt;p class=&quot;text-small picker-hint&quot;&gt;填写后会对当前选中的所有订阅组统一应用该正则。后端使用 Go RE2，不支持前后预查和反向引用。&lt;/p&gt;
+        &lt;p class=&quot;text-small text-destructive picker-error subscription-picker-error&quot; aria-live=&quot;polite&quot;&gt;&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div class=&quot;picker-section&quot;&gt;
+        &lt;div class=&quot;picker-preview-head&quot;&gt;&lt;div&gt;&lt;h3&gt;匹配节点预览&lt;/h3&gt;&lt;span class=&quot;text-small text-muted subscription-preview-summary&quot;&gt;先选择一个或多个订阅组&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;
+        &lt;div class=&quot;picker-preview-groups subscription-preview-groups&quot; aria-live=&quot;polite&quot;&gt;&lt;/div&gt;
+      &lt;/div&gt;
+      &lt;div class=&quot;form-actions&quot;&gt;&lt;button type=&quot;button&quot; value=&quot;cancel&quot; class=&quot;btn&quot;&gt;取消&lt;/button&gt;&lt;button type=&quot;button&quot; class=&quot;btn btn-primary subscription-picker-confirm&quot; disabled&gt;添加所选订阅组&lt;/button&gt;&lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/dialog&gt;
+
+  &lt;dialog id=&quot;regex-modal&quot; class=&quot;card&quot;&gt;
+    &lt;form method=&quot;dialog&quot; class=&quot;modal-content&quot;&gt;&lt;div class=&quot;modal-head&quot;&gt;&lt;div&gt;&lt;h2&gt;添加订阅到群组&lt;/h2&gt;&lt;span class=&quot;text-small text-muted&quot;&gt;为订阅节点设置名称过滤规则&lt;/span&gt;&lt;/div&gt;&lt;button value=&quot;cancel&quot; class=&quot;btn btn-ghost icon-btn regex-cancel&quot; aria-label=&quot;关闭&quot;&gt;&lt;i data-lucide=&quot;x&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;/button&gt;&lt;/div&gt;&lt;div class=&quot;form-grid&quot;&gt;&lt;label class=&quot;form-label&quot;&gt;订阅&lt;input class=&quot;form-control regex-subscription&quot; readonly&gt;&lt;/label&gt;&lt;label class=&quot;form-label&quot;&gt;目标群组&lt;input class=&quot;form-control regex-group&quot; readonly&gt;&lt;/label&gt;&lt;label class=&quot;form-label form-span&quot;&gt;节点名称正则表达式&lt;input class=&quot;form-control regex-input&quot; placeholder=&quot;例如：香港|日本|HK|JP&quot;&gt;&lt;/label&gt;&lt;/div&gt;&lt;div class=&quot;regex-preview&quot;&gt;&lt;div class=&quot;switch-row&quot;&gt;&lt;span&gt;使用全部节点&lt;/span&gt;&lt;label class=&quot;form-check form-switch&quot;&gt;&lt;input class=&quot;form-check-input all-nodes-toggle&quot; type=&quot;checkbox&quot;&gt;&lt;span class=&quot;form-check-label&quot;&gt;关闭&lt;/span&gt;&lt;/label&gt;&lt;/div&gt;&lt;div class=&quot;text-small&quot;&gt;&lt;span class=&quot;regex-match-count&quot;&gt;匹配 3 个节点&lt;/span&gt;&lt;div class=&quot;regex-results&quot;&gt;&lt;span class=&quot;viz-badge&quot;&gt;JP-Tokyo-Premium&lt;/span&gt;&lt;span class=&quot;viz-badge&quot;&gt;HK-HongKong-IPLC&lt;/span&gt;&lt;span class=&quot;viz-badge&quot;&gt;JP-Osaka&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;form-actions&quot;&gt;&lt;button value=&quot;cancel&quot; class=&quot;btn regex-cancel&quot;&gt;取消&lt;/button&gt;&lt;button value=&quot;default&quot; class=&quot;btn btn-primary regex-confirm&quot;&gt;加入群组&lt;/button&gt;&lt;/div&gt;&lt;/form&gt;
+  &lt;/dialog&gt;
+
+  &lt;script&gt;
+    false &amp;&amp; (() =&gt; {
+      const root = document.getElementById(&#x27;dae-ui-high-fidelity&#x27;);
+      const toast = root.querySelector(&#x27;.toast&#x27;);
+      const unsaved = root.querySelector(&#x27;.unsaved&#x27;);
+      const regexDialog = root.querySelector(&#x27;#regex-modal&#x27;);
+      const regexInput = root.querySelector(&#x27;.regex-input&#x27;);
+      const regexSubscription = root.querySelector(&#x27;.regex-subscription&#x27;);
+      const regexGroup = root.querySelector(&#x27;.regex-group&#x27;);
+      const regexMatchCount = root.querySelector(&#x27;.regex-match-count&#x27;);
+      const regexResults = root.querySelector(&#x27;.regex-results&#x27;);
+      const nodePickerDialog = root.querySelector(&#x27;#group-node-picker-modal&#x27;);
+      const subscriptionPickerDialog = root.querySelector(&#x27;#group-subscription-picker-modal&#x27;);
+      const nodePickerSearch = root.querySelector(&#x27;.node-picker-search&#x27;);
+      const nodePickerList = root.querySelector(&#x27;.node-picker-list&#x27;);
+      const nodePickerSelected = root.querySelector(&#x27;.node-picker-selected&#x27;);
+      const nodePickerConfirm = root.querySelector(&#x27;.node-picker-confirm&#x27;);
+      const subscriptionPickerSearch = root.querySelector(&#x27;.subscription-picker-search&#x27;);
+      const subscriptionPickerList = root.querySelector(&#x27;.subscription-picker-list&#x27;);
+      const subscriptionPickerRegex = root.querySelector(&#x27;.subscription-picker-regex&#x27;);
+      const subscriptionPickerSelected = root.querySelector(&#x27;.subscription-picker-selected&#x27;);
+      const subscriptionPickerError = root.querySelector(&#x27;.subscription-picker-error&#x27;);
+      const subscriptionPreviewSummary = root.querySelector(&#x27;.subscription-preview-summary&#x27;);
+      const subscriptionPreviewGroups = root.querySelector(&#x27;.subscription-preview-groups&#x27;);
+      const subscriptionPickerConfirm = root.querySelector(&#x27;.subscription-picker-confirm&#x27;);
+      let draggedResource = null;
+      let pendingSubscriptionDrop = null;
+      let activeNodePickerZone = null;
+      let activeSubscriptionPickerZone = null;
+      const selectedNodeIds = new Set();
+      const selectedSubscriptionIds = new Set();
+
+      const nodeNames = [&#x27;JP-Tokyo-Premium&#x27;, &#x27;SG-Singapore-Standard&#x27;, &#x27;HK-HongKong-IPLC&#x27;, &#x27;US-LosAngeles-BGP&#x27;, &#x27;JP-Osaka&#x27;, &#x27;DE-Frankfurt&#x27;];
+      const nodeCatalog = [
+        { id: &#x27;jp&#x27;, name: &#x27;JP-Tokyo-Premium&#x27;, protocol: &#x27;vmess&#x27;, description: &#x27;Tokyo-01&#x27;, source: &#x27;手动节点&#x27;, latency: &#x27;68 ms&#x27; },
+        { id: &#x27;sg&#x27;, name: &#x27;SG-Singapore-Standard&#x27;, protocol: &#x27;trojan&#x27;, description: &#x27;Singapore-02&#x27;, source: &#x27;手动节点&#x27;, latency: &#x27;72 ms&#x27; },
+        { id: &#x27;hk&#x27;, name: &#x27;HK-HongKong-IPLC&#x27;, protocol: &#x27;hysteria2&#x27;, description: &#x27;HongKong-03&#x27;, source: &#x27;手动节点&#x27;, latency: &#x27;54 ms&#x27; },
+        { id: &#x27;us&#x27;, name: &#x27;US-LosAngeles-BGP&#x27;, protocol: &#x27;vless&#x27;, description: &#x27;LosAngeles-01&#x27;, source: &#x27;来自订阅：Backup Provider&#x27;, latency: &#x27;138 ms&#x27; },
+        { id: &#x27;osaka&#x27;, name: &#x27;JP-Osaka&#x27;, protocol: &#x27;anytls&#x27;, description: &#x27;Osaka-02&#x27;, source: &#x27;来自订阅：Premium Provider&#x27;, latency: &#x27;65 ms&#x27; },
+        { id: &#x27;de&#x27;, name: &#x27;DE-Frankfurt&#x27;, protocol: &#x27;shadowsocks&#x27;, description: &#x27;Frankfurt-01&#x27;, source: &#x27;来自订阅：Backup Provider&#x27;, latency: &#x27;176 ms&#x27; }
+      ];
+      const subscriptionCatalog = [
+        {
+          id: &#x27;premium&#x27;, name: &#x27;Premium Provider&#x27;, meta: &#x27;6 个节点&#x27;,
+          previewNodes: [
+            { id: &#x27;premium-jp1&#x27;, name: &#x27;JP-Tokyo-Premium&#x27;, protocol: &#x27;vmess&#x27; },
+            { id: &#x27;premium-sg1&#x27;, name: &#x27;SG-Singapore-Standard&#x27;, protocol: &#x27;trojan&#x27; },
+            { id: &#x27;premium-hk1&#x27;, name: &#x27;HK-HongKong-IPLC&#x27;, protocol: &#x27;hysteria2&#x27; },
+            { id: &#x27;premium-jp2&#x27;, name: &#x27;JP-Osaka&#x27;, protocol: &#x27;anytls&#x27; },
+            { id: &#x27;premium-us1&#x27;, name: &#x27;US-LosAngeles-BGP&#x27;, protocol: &#x27;vless&#x27; },
+            { id: &#x27;premium-de1&#x27;, name: &#x27;DE-Frankfurt&#x27;, protocol: &#x27;shadowsocks&#x27; }
+          ]
+        },
+        {
+          id: &#x27;backup&#x27;, name: &#x27;Backup Provider&#x27;, meta: &#x27;5 个节点&#x27;,
+          previewNodes: [
+            { id: &#x27;backup-us1&#x27;, name: &#x27;US-LosAngeles-BGP&#x27;, protocol: &#x27;vless&#x27; },
+            { id: &#x27;backup-de1&#x27;, name: &#x27;DE-Frankfurt&#x27;, protocol: &#x27;shadowsocks&#x27; },
+            { id: &#x27;backup-sg1&#x27;, name: &#x27;SG-Singapore-Backup&#x27;, protocol: &#x27;trojan&#x27; },
+            { id: &#x27;backup-hk1&#x27;, name: &#x27;HK-HongKong-Backup&#x27;, protocol: &#x27;vmess&#x27; },
+            { id: &#x27;backup-jp1&#x27;, name: &#x27;JP-Tokyo-Backup&#x27;, protocol: &#x27;anytls&#x27; }
+          ]
+        }
+      ];
+
+      const showToast = (message) =&gt; {
+        toast.textContent = message;
+        toast.classList.add(&#x27;is-visible&#x27;);
+      };
+
+      const markDirty = (message) =&gt; {
+        unsaved.classList.add(&#x27;is-visible&#x27;);
+        if (message) showToast(message);
+      };
+
+      const refreshIcons = () =&gt; {
+        if (window.lucide) window.lucide.createIcons({ attrs: { width: 16, height: 16 } });
+      };
+
+      root.querySelectorAll(&#x27;dialog button&#x27;).forEach((button) =&gt; {
+        if (!button.hasAttribute(&#x27;type&#x27;)) button.type = &#x27;button&#x27;;
+      });
+
+      root.querySelectorAll(&#x27;dialog button[value=&quot;cancel&quot;]&#x27;).forEach((button) =&gt; {
+        button.addEventListener(&#x27;click&#x27;, () =&gt; button.closest(&#x27;dialog&#x27;).close());
+      });
+
+      root.querySelectorAll(&#x27;.open-modal&#x27;).forEach((button) =&gt; {
+        button.addEventListener(&#x27;click&#x27;, () =&gt; {
+          const dialog = root.querySelector(`#${button.dataset.modal}`);
+          if (dialog) dialog.showModal();
+        });
+      });
+
+      root.querySelectorAll(&#x27;.tab-button&#x27;).forEach((button) =&gt; {
+        button.addEventListener(&#x27;click&#x27;, () =&gt; {
+          const dialog = button.closest(&#x27;dialog&#x27;);
+          dialog.querySelectorAll(&#x27;.tab-button&#x27;).forEach((tab) =&gt; tab.setAttribute(&#x27;aria-selected&#x27;, String(tab === button)));
+          dialog.querySelectorAll(&#x27;.tab-panel&#x27;).forEach((panel) =&gt; panel.classList.toggle(&#x27;is-active&#x27;, panel.id === button.dataset.tab));
+        });
+      });
+
+      root.querySelectorAll(&#x27;.modal-save&#x27;).forEach((button) =&gt; {
+        button.addEventListener(&#x27;click&#x27;, () =&gt; {
+          markDirty(`${button.dataset.label}已更新，等待保存并重载`);
+          button.closest(&#x27;dialog&#x27;).close();
+        });
+      });
+
+      root.querySelectorAll(&#x27;.subscription-toggle&#x27;).forEach((button) =&gt; {
+        button.addEventListener(&#x27;click&#x27;, () =&gt; {
+          const content = button.closest(&#x27;.resource-card&#x27;).querySelector(&#x27;.subscription-nodes&#x27;);
+          const opened = content.classList.toggle(&#x27;is-open&#x27;);
+          button.setAttribute(&#x27;aria-expanded&#x27;, String(opened));
+        });
+      });
+
+      root.querySelectorAll(&#x27;.duplicate-action&#x27;).forEach((button) =&gt; button.addEventListener(&#x27;click&#x27;, () =&gt; markDirty(&#x27;已创建副本&#x27;)));
+      root.querySelector(&#x27;.import-action&#x27;).addEventListener(&#x27;click&#x27;, () =&gt; showToast(&#x27;批量导入入口：粘贴多个节点链接后解析&#x27;));
+      root.querySelector(&#x27;.validate-action&#x27;).addEventListener(&#x27;click&#x27;, () =&gt; showToast(&#x27;配置验证通过：dae validate 返回成功&#x27;));
+      root.querySelector(&#x27;.save-reload-action&#x27;).addEventListener(&#x27;click&#x27;, () =&gt; {
+        unsaved.classList.remove(&#x27;is-visible&#x27;);
+        showToast(&#x27;四个配置文件已保存，dae 热重载成功&#x27;);
+      });
+
+      root.querySelector(&#x27;.node-save&#x27;).addEventListener(&#x27;click&#x27;, (event) =&gt; {
+        markDirty(&#x27;节点配置已更新&#x27;);
+        event.currentTarget.closest(&#x27;dialog&#x27;).close();
+      });
+      root.querySelector(&#x27;.subscription-save&#x27;).addEventListener(&#x27;click&#x27;, (event) =&gt; {
+        markDirty(&#x27;订阅配置已更新&#x27;);
+        event.currentTarget.closest(&#x27;dialog&#x27;).close();
+      });
+
+      root.querySelectorAll(&#x27;.draggable-resource&#x27;).forEach((resource) =&gt; {
+        resource.addEventListener(&#x27;dragstart&#x27;, (event) =&gt; {
+          draggedResource = { type: resource.dataset.type, id: resource.dataset.id, name: resource.dataset.name };
+          resource.classList.add(&#x27;is-dragging&#x27;);
+          event.dataTransfer.effectAllowed = &#x27;copy&#x27;;
+          event.dataTransfer.setData(&#x27;text/plain&#x27;, resource.dataset.id);
+        });
+        resource.addEventListener(&#x27;dragend&#x27;, () =&gt; {
+          resource.classList.remove(&#x27;is-dragging&#x27;);
+          root.querySelectorAll(&#x27;.group-zone&#x27;).forEach((zone) =&gt; zone.classList.remove(&#x27;is-over&#x27;));
+        });
+      });
+
+      const updateZoneCount = (zone) =&gt; {
+        const count = zone.querySelectorAll(&#x27;.group-badge&#x27;).length;
+        zone.querySelector(&#x27;.zone-count&#x27;).textContent = String(count);
+        const empty = zone.querySelector(&#x27;.empty-drop&#x27;);
+        if (empty &amp;&amp; count &gt; 0) empty.remove();
+        if (!empty &amp;&amp; count === 0) {
+          const emptyLabel = document.createElement(&#x27;span&#x27;);
+          emptyLabel.className = &#x27;empty-drop text-small&#x27;;
+          emptyLabel.textContent = &#x27;暂无内容，可拖入或点击添加&#x27;;
+          zone.querySelector(&#x27;.group-items&#x27;).appendChild(emptyLabel);
+        }
+
+        const groupCard = zone.closest(&#x27;.group-card&#x27;);
+        const nodeCount = groupCard.querySelector(&#x27;[data-accept=&quot;node&quot;]&#x27;).querySelectorAll(&#x27;.group-badge&#x27;).length;
+        const subscriptionCount = groupCard.querySelector(&#x27;[data-accept=&quot;subscription&quot;]&#x27;).querySelectorAll(&#x27;.group-badge&#x27;).length;
+        groupCard.querySelector(&#x27;.group-node-summary&#x27;).textContent = `${nodeCount} 个节点`;
+        groupCard.querySelector(&#x27;.group-subscription-summary&#x27;).textContent = `${subscriptionCount} 个订阅组`;
+      };
+
+      const bindGroupRemove = (button) =&gt; {
+        button.addEventListener(&#x27;click&#x27;, (event) =&gt; {
+          event.stopPropagation();
+          const badge = button.closest(&#x27;.group-badge&#x27;);
+          const zone = button.closest(&#x27;.group-zone&#x27;);
+          const nameElement = badge.querySelector(&#x27;.group-name&#x27;);
+          const resourceName = nameElement ? nameElement.textContent : badge.dataset.id;
+          const groupName = zone.dataset.group;
+          badge.remove();
+          updateZoneCount(zone);
+          markDirty(`${resourceName} 已从 ${groupName} 群组移除`);
+        });
+        button.addEventListener(&#x27;pointerdown&#x27;, (event) =&gt; event.stopPropagation());
+      };
+
+      root.querySelectorAll(&#x27;.group-remove&#x27;).forEach(bindGroupRemove);
+
+      const addToZone = (zone, resource, regex, notify = true) =&gt; {
+        if (zone.querySelector(`[data-id=&quot;${resource.id}&quot;]`)) {
+          if (notify) showToast(`${resource.name} 已经在 ${zone.dataset.group} 中`);
+          return false;
+        }
+        const badge = document.createElement(&#x27;span&#x27;);
+        badge.className = &#x27;group-badge text-small&#x27;;
+        badge.dataset.id = resource.id;
+        const grip = document.createElement(&#x27;i&#x27;);
+        grip.setAttribute(&#x27;data-lucide&#x27;, &#x27;grip-vertical&#x27;);
+        grip.setAttribute(&#x27;aria-hidden&#x27;, &#x27;true&#x27;);
+        badge.appendChild(grip);
+        const label = document.createElement(&#x27;span&#x27;);
+        label.className = &#x27;group-name&#x27;;
+        label.textContent = resource.name;
+        badge.appendChild(label);
+        if (zone.dataset.accept === &#x27;subscription&#x27;) {
+          const filter = document.createElement(&#x27;span&#x27;);
+          filter.className = &#x27;filter&#x27;;
+          const matchCount = Number.isFinite(resource.matchCount) ? resource.matchCount : resource.previewNodes?.length || 0;
+          filter.textContent = regex ? `匹配 ${matchCount} 个节点 · /${regex}/` : `匹配 ${matchCount} 个节点`;
+          badge.append(&#x27; &#x27;, filter);
+        }
+        const removeButton = document.createElement(&#x27;button&#x27;);
+        removeButton.type = &#x27;button&#x27;;
+        removeButton.className = &#x27;group-remove&#x27;;
+        removeButton.setAttribute(&#x27;aria-label&#x27;, `从群组移除 ${resource.name}`);
+        const removeIcon = document.createElement(&#x27;i&#x27;);
+        removeIcon.setAttribute(&#x27;data-lucide&#x27;, &#x27;x&#x27;);
+        removeIcon.setAttribute(&#x27;aria-hidden&#x27;, &#x27;true&#x27;);
+        removeButton.appendChild(removeIcon);
+        badge.appendChild(removeButton);
+        bindGroupRemove(removeButton);
+        zone.querySelector(&#x27;.group-items&#x27;).appendChild(badge);
+        updateZoneCount(zone);
+        refreshIcons();
+        if (notify) markDirty(`${resource.name} 已加入 ${zone.dataset.group}${regex ? `，正则：/${regex}/` : &#x27;&#x27;}`);
+        return true;
+      };
+
+      const makePickerOption = ({ id, title, description, meta, badge, checked, onChange }) =&gt; {
+        const option = document.createElement(&#x27;label&#x27;);
+        option.className = `picker-option${checked ? &#x27; is-selected&#x27; : &#x27;&#x27;}`;
+        const checkbox = document.createElement(&#x27;input&#x27;);
+        checkbox.type = &#x27;checkbox&#x27;;
+        checkbox.className = &#x27;form-check-input&#x27;;
+        checkbox.checked = checked;
+        checkbox.setAttribute(&#x27;aria-label&#x27;, `选择 ${title}`);
+        checkbox.addEventListener(&#x27;change&#x27;, () =&gt; onChange(id));
+        const copy = document.createElement(&#x27;span&#x27;);
+        copy.className = &#x27;picker-option-copy&#x27;;
+        const titleElement = document.createElement(&#x27;span&#x27;);
+        titleElement.className = &#x27;picker-option-title&#x27;;
+        titleElement.textContent = title;
+        copy.appendChild(titleElement);
+        if (description) {
+          const descriptionElement = document.createElement(&#x27;span&#x27;);
+          descriptionElement.className = &#x27;text-small picker-option-meta&#x27;;
+          descriptionElement.textContent = description;
+          copy.appendChild(descriptionElement);
+        }
+        option.append(checkbox, copy);
+        if (badge || meta) {
+          const metaElement = document.createElement(&#x27;span&#x27;);
+          metaElement.className = &#x27;viz-badge&#x27;;
+          metaElement.textContent = badge || meta;
+          option.appendChild(metaElement);
+        }
+        return option;
+      };
+
+      const availableForZone = (catalog, zone) =&gt; {
+        if (!zone) return [];
+        const existingIds = new Set([...zone.querySelectorAll(&#x27;.group-badge&#x27;)].map((badge) =&gt; badge.dataset.id));
+        return catalog.filter((item) =&gt; !existingIds.has(item.id));
+      };
+
+      const renderNodePicker = () =&gt; {
+        const availableNodes = availableForZone(nodeCatalog, activeNodePickerZone);
+        const query = nodePickerSearch.value.trim().toLowerCase();
+        const filteredNodes = availableNodes.filter((item) =&gt; !query || [item.name, item.protocol, item.description, item.source].some((value) =&gt; value.toLowerCase().includes(query)));
+        nodePickerSelected.textContent = `已选 ${selectedNodeIds.size} 项`;
+        nodePickerConfirm.disabled = selectedNodeIds.size === 0;
+        nodePickerList.replaceChildren();
+        if (filteredNodes.length === 0) {
+          const empty = document.createElement(&#x27;p&#x27;);
+          empty.className = &#x27;picker-empty text-small&#x27;;
+          empty.textContent = query ? &#x27;没有匹配结果&#x27; : &#x27;暂无可添加的节点&#x27;;
+          nodePickerList.appendChild(empty);
+          return;
+        }
+        filteredNodes.forEach((item) =&gt; {
+          nodePickerList.appendChild(makePickerOption({
+            id: item.id,
+            title: item.name,
+            description: `${item.source} · ${item.description} · ${item.latency}`,
+            badge: item.protocol,
+            checked: selectedNodeIds.has(item.id),
+            onChange: (id) =&gt; {
+              selectedNodeIds.has(id) ? selectedNodeIds.delete(id) : selectedNodeIds.add(id);
+              renderNodePicker();
+            }
+          }));
+        });
+      };
+
+      const getSubscriptionRegex = () =&gt; {
+        const pattern = subscriptionPickerRegex.value.trim();
+        if (!pattern) return { pattern: &#x27;&#x27;, regex: null, error: &#x27;&#x27; };
+        if (pattern.includes(&#x27;(?=&#x27;) || pattern.includes(&#x27;(?!&#x27;) || pattern.includes(&#x27;(?&lt;=&#x27;) || pattern.includes(&#x27;(?&lt;!&#x27;) || /\\[1-9]/.test(pattern)) {
+          return { pattern, regex: null, error: &#x27;RE2 不支持前后预查或反向引用&#x27; };
+        }
+        try {
+          return { pattern, regex: new RegExp(pattern, &#x27;i&#x27;), error: &#x27;&#x27; };
+        } catch {
+          return { pattern, regex: null, error: &#x27;正则表达式无效&#x27; };
+        }
+      };
+
+      const renderSubscriptionPicker = () =&gt; {
+        const availableSubscriptions = availableForZone(subscriptionCatalog, activeSubscriptionPickerZone);
+        const query = subscriptionPickerSearch.value.trim().toLowerCase();
+        const filteredSubscriptions = availableSubscriptions.filter((item) =&gt; !query || [item.name, item.meta].some((value) =&gt; value.toLowerCase().includes(query)));
+        subscriptionPickerSelected.textContent = `已选 ${selectedSubscriptionIds.size} 项`;
+        subscriptionPickerList.replaceChildren();
+        if (filteredSubscriptions.length === 0) {
+          const empty = document.createElement(&#x27;p&#x27;);
+          empty.className = &#x27;picker-empty text-small&#x27;;
+          empty.textContent = query ? &#x27;没有匹配结果&#x27; : &#x27;暂无可添加的订阅组&#x27;;
+          subscriptionPickerList.appendChild(empty);
+        } else {
+          filteredSubscriptions.forEach((item) =&gt; {
+            subscriptionPickerList.appendChild(makePickerOption({
+              id: item.id,
+              title: item.name,
+              meta: item.meta,
+              checked: selectedSubscriptionIds.has(item.id),
+              onChange: (id) =&gt; {
+                selectedSubscriptionIds.has(id) ? selectedSubscriptionIds.delete(id) : selectedSubscriptionIds.add(id);
+                renderSubscriptionPicker();
+              }
+            }));
+          });
+        }
+
+        const { pattern, regex, error } = getSubscriptionRegex();
+        subscriptionPickerError.textContent = error;
+        const selectedItems = availableSubscriptions.filter((item) =&gt; selectedSubscriptionIds.has(item.id));
+        const previewData = selectedItems.map((item) =&gt; ({
+          item,
+          matchedNodes: error ? [] : (regex ? item.previewNodes.filter((node) =&gt; regex.test(node.name)) : item.previewNodes)
+        }));
+        const totalMatched = previewData.reduce((total, group) =&gt; total + group.matchedNodes.length, 0);
+        subscriptionPreviewGroups.replaceChildren();
+
+        if (selectedItems.length === 0) {
+          subscriptionPreviewSummary.textContent = &#x27;先选择一个或多个订阅组，下面会展示将被加入的节点&#x27;;
+        } else if (error) {
+          subscriptionPreviewSummary.textContent = &#x27;修正正则后显示匹配结果&#x27;;
+        } else if (pattern) {
+          subscriptionPreviewSummary.textContent = `当前共匹配 ${totalMatched} 个节点`;
+        } else {
+          subscriptionPreviewSummary.textContent = &#x27;未填写正则时，将直接添加整个订阅组&#x27;;
+        }
+
+        previewData.forEach(({ item, matchedNodes }) =&gt; {
+          const group = document.createElement(&#x27;div&#x27;);
+          group.className = &#x27;picker-preview-group&#x27;;
+          const title = document.createElement(&#x27;div&#x27;);
+          title.className = &#x27;picker-preview-title&#x27;;
+          const name = document.createElement(&#x27;span&#x27;);
+          name.textContent = item.name;
+          const count = document.createElement(&#x27;span&#x27;);
+          count.className = &#x27;viz-badge&#x27;;
+          count.textContent = `匹配 ${matchedNodes.length} 个节点`;
+          title.append(name, count);
+          group.appendChild(title);
+          if (matchedNodes.length &gt; 0) {
+            const nodes = document.createElement(&#x27;div&#x27;);
+            nodes.className = &#x27;picker-preview-nodes&#x27;;
+            matchedNodes.forEach((node) =&gt; {
+              const badge = document.createElement(&#x27;span&#x27;);
+              badge.className = &#x27;viz-badge&#x27;;
+              badge.textContent = `${node.protocol} · ${node.name}`;
+              nodes.appendChild(badge);
+            });
+            group.appendChild(nodes);
+          } else {
+            const empty = document.createElement(&#x27;p&#x27;);
+            empty.className = &#x27;text-small picker-hint&#x27;;
+            empty.textContent = &#x27;这个订阅组在当前规则下没有匹配节点&#x27;;
+            group.appendChild(empty);
+          }
+          subscriptionPreviewGroups.appendChild(group);
+        });
+
+        subscriptionPickerConfirm.disabled = selectedItems.length === 0 || !!error || (!!pattern &amp;&amp; totalMatched === 0);
+      };
+
+      root.querySelectorAll(&#x27;.group-picker-open&#x27;).forEach((button) =&gt; {
+        button.addEventListener(&#x27;click&#x27;, (event) =&gt; {
+          event.stopPropagation();
+          const zone = button.closest(&#x27;.group-zone&#x27;);
+          const groupName = zone.dataset.group;
+          if (button.dataset.picker === &#x27;node&#x27;) {
+            activeNodePickerZone = zone;
+            selectedNodeIds.clear();
+            nodePickerSearch.value = &#x27;&#x27;;
+            root.querySelector(&#x27;.node-picker-title&#x27;).textContent = `添加节点到 ${groupName}`;
+            renderNodePicker();
+            nodePickerDialog.showModal();
+          } else {
+            activeSubscriptionPickerZone = zone;
+            selectedSubscriptionIds.clear();
+            subscriptionPickerSearch.value = &#x27;&#x27;;
+            subscriptionPickerRegex.value = &#x27;&#x27;;
+            root.querySelector(&#x27;.subscription-picker-title&#x27;).textContent = `添加订阅组到 ${groupName}`;
+            renderSubscriptionPicker();
+            subscriptionPickerDialog.showModal();
+          }
+        });
+      });
+
+      nodePickerSearch.addEventListener(&#x27;input&#x27;, renderNodePicker);
+      subscriptionPickerSearch.addEventListener(&#x27;input&#x27;, renderSubscriptionPicker);
+      subscriptionPickerRegex.addEventListener(&#x27;input&#x27;, renderSubscriptionPicker);
+
+      nodePickerConfirm.addEventListener(&#x27;click&#x27;, () =&gt; {
+        if (!activeNodePickerZone) return;
+        let addedCount = 0;
+        nodeCatalog.filter((item) =&gt; selectedNodeIds.has(item.id)).forEach((item) =&gt; {
+          if (addToZone(activeNodePickerZone, item, &#x27;&#x27;, false)) addedCount += 1;
+        });
+        if (addedCount &gt; 0) markDirty(`已向 ${activeNodePickerZone.dataset.group} 添加 ${addedCount} 个节点`);
+        nodePickerDialog.close();
+      });
+
+      subscriptionPickerConfirm.addEventListener(&#x27;click&#x27;, () =&gt; {
+        if (!activeSubscriptionPickerZone) return;
+        const { pattern, regex, error } = getSubscriptionRegex();
+        if (error) return;
+        let addedCount = 0;
+        subscriptionCatalog.filter((item) =&gt; selectedSubscriptionIds.has(item.id)).forEach((item) =&gt; {
+          const matchCount = regex ? item.previewNodes.filter((node) =&gt; regex.test(node.name)).length : item.previewNodes.length;
+          if (addToZone(activeSubscriptionPickerZone, { ...item, matchCount }, pattern, false)) addedCount += 1;
+        });
+        if (addedCount &gt; 0) markDirty(`已向 ${activeSubscriptionPickerZone.dataset.group} 添加 ${addedCount} 个订阅组${pattern ? `，统一正则：/${pattern}/` : &#x27;&#x27;}`);
+        subscriptionPickerDialog.close();
+      });
+
+      nodePickerDialog.addEventListener(&#x27;close&#x27;, () =&gt; {
+        activeNodePickerZone = null;
+        selectedNodeIds.clear();
+      });
+      subscriptionPickerDialog.addEventListener(&#x27;close&#x27;, () =&gt; {
+        activeSubscriptionPickerZone = null;
+        selectedSubscriptionIds.clear();
+      });
+
+      root.querySelectorAll(&#x27;.group-zone&#x27;).forEach((zone) =&gt; {
+        zone.addEventListener(&#x27;dragover&#x27;, (event) =&gt; {
+          if (!draggedResource || draggedResource.type !== zone.dataset.accept) return;
+          event.preventDefault();
+          event.dataTransfer.dropEffect = &#x27;copy&#x27;;
+          zone.classList.add(&#x27;is-over&#x27;);
+        });
+        zone.addEventListener(&#x27;dragleave&#x27;, () =&gt; zone.classList.remove(&#x27;is-over&#x27;));
+        zone.addEventListener(&#x27;drop&#x27;, (event) =&gt; {
+          event.preventDefault();
+          zone.classList.remove(&#x27;is-over&#x27;);
+          if (!draggedResource || draggedResource.type !== zone.dataset.accept) return;
+          if (draggedResource.type === &#x27;subscription&#x27;) {
+            pendingSubscriptionDrop = { zone, resource: { ...draggedResource } };
+            regexSubscription.value = draggedResource.name;
+            regexGroup.value = zone.dataset.group;
+            regexInput.value = &#x27;香港|日本|HK|JP&#x27;;
+            updateRegexPreview();
+            regexDialog.showModal();
+          } else {
+            addToZone(zone, draggedResource, &#x27;&#x27;);
+          }
+        });
+      });
+
+      const updateRegexPreview = () =&gt; {
+        let matches = nodeNames;
+        const useAll = root.querySelector(&#x27;.all-nodes-toggle&#x27;).checked;
+        const pattern = regexInput.value.trim();
+        if (!useAll &amp;&amp; pattern) {
+          try {
+            const regex = new RegExp(pattern, &#x27;i&#x27;);
+            matches = nodeNames.filter((name) =&gt; regex.test(name));
+          } catch {
+            regexMatchCount.textContent = &#x27;正则表达式无效&#x27;;
+            regexResults.replaceChildren();
+            return;
+          }
+        }
+        regexMatchCount.textContent = `匹配 ${matches.length} 个节点`;
+        regexResults.replaceChildren(...matches.slice(0, 5).map((name) =&gt; {
+          const badge = document.createElement(&#x27;span&#x27;);
+          badge.className = &#x27;viz-badge&#x27;;
+          badge.textContent = name;
+          return badge;
+        }));
+      };
+
+      regexInput.addEventListener(&#x27;input&#x27;, updateRegexPreview);
+      root.querySelector(&#x27;.all-nodes-toggle&#x27;).addEventListener(&#x27;change&#x27;, (event) =&gt; {
+        regexInput.disabled = event.target.checked;
+        updateRegexPreview();
+      });
+
+      root.querySelector(&#x27;.regex-confirm&#x27;).addEventListener(&#x27;click&#x27;, () =&gt; {
+        if (!pendingSubscriptionDrop) return;
+        const useAll = root.querySelector(&#x27;.all-nodes-toggle&#x27;).checked;
+        addToZone(pendingSubscriptionDrop.zone, pendingSubscriptionDrop.resource, useAll ? &#x27;&#x27; : regexInput.value.trim());
+        pendingSubscriptionDrop = null;
+        regexDialog.close();
+      });
+      root.querySelectorAll(&#x27;.regex-cancel&#x27;).forEach((button) =&gt; button.addEventListener(&#x27;click&#x27;, () =&gt; {
+        pendingSubscriptionDrop = null;
+        regexDialog.close();
+      }));
+
+      root.querySelector(&#x27;.add-row-action&#x27;).addEventListener(&#x27;click&#x27;, () =&gt; markDirty(&#x27;已新增一个 DNS 上游输入行&#x27;));
+      root.querySelector(&#x27;.node-protocol&#x27;).addEventListener(&#x27;change&#x27;, (event) =&gt; {
+        root.querySelector(&#x27;.protocol-credential&#x27;).childNodes[0].textContent = [&#x27;Hysteria2&#x27;, &#x27;AnyTLS&#x27;].includes(event.target.value) ? &#x27;认证密码&#x27; : &#x27;UUID / 密码&#x27;;
+      });
+
+      refreshIcons();
+    })();
+  &lt;/script&gt;
+  &lt;script src=&quot;/luci-static/resources/dae/dashboard.js?v=20260713-3&quot;&gt;&lt;/script&gt;
+&lt;/div&gt;
+
+&lt;script src=&quot;https://unpkg.com/@floating-ui/core@1.7.3/dist/floating-ui.core.umd.min.js&quot;&gt;&lt;/script&gt;
+&lt;script src=&quot;https://unpkg.com/@floating-ui/dom@1.7.4/dist/floating-ui.dom.umd.min.js&quot;&gt;&lt;/script&gt;
+&lt;script&gt;
+(() =&gt; {
+  if (window.FloatingUIDOM == null) {
+    return;
+  }
+  const { autoUpdate, computePosition, flip, offset, shift, size } =
+    window.FloatingUIDOM;
+  const tooltipPlacements = new Set([&quot;top&quot;, &quot;right&quot;, &quot;bottom&quot;, &quot;left&quot;]);
+  const tooltipId = `codex-visualization-tooltip-${
+    window.crypto?.randomUUID?.() ?? Date.now().toString(36)
+  }`;
+  const tooltipGap = 5;
+  const hoverDelay = 700;
+  const skipDelay = 300;
+  let activeTrigger = null;
+  let pendingTrigger = null;
+  let tooltip = null;
+  let openTimeout = null;
+  let autoUpdateCleanup = null;
+  let positionRequest = 0;
+  let skipDelayUntil = 0;
+
+  const getTrigger = (target) =&gt;
+    target?.nodeType === Node.ELEMENT_NODE
+      ? target.closest(&quot;[data-tooltip]&quot;)
+      : null;
+  const containsTarget = (trigger, target) =&gt;
+    target?.nodeType != null &amp;&amp; trigger.contains(target);
+  const getContent = (trigger) =&gt;
+    trigger.getAttribute(&quot;data-tooltip&quot;)?.trim() ?? &quot;&quot;;
+  const getPlacement = (trigger) =&gt; {
+    const placement = trigger.getAttribute(&quot;data-tooltip-placement&quot;);
+    return tooltipPlacements.has(placement) ? placement : &quot;top&quot;;
+  };
+  const getTooltip = () =&gt; {
+    if (tooltip == null) {
+      tooltip = document.createElement(&quot;div&quot;);
+      tooltip.id = tooltipId;
+      tooltip.className = &quot;tooltip&quot;;
+      tooltip.setAttribute(&quot;role&quot;, &quot;tooltip&quot;);
+    }
+    return tooltip;
+  };
+  const setDescribedBy = (trigger, described) =&gt; {
+    const ids = new Set(
+      (trigger.getAttribute(&quot;aria-describedby&quot;) ?? &quot;&quot;)
+        .split(/\s+/)
+        .filter(Boolean),
+    );
+    if (described) {
+      ids.add(tooltipId);
+    } else {
+      ids.delete(tooltipId);
+    }
+    if (ids.size === 0) {
+      trigger.removeAttribute(&quot;aria-describedby&quot;);
+    } else {
+      trigger.setAttribute(&quot;aria-describedby&quot;, [...ids].join(&quot; &quot;));
+    }
+  };
+  const clearOpenTimeout = () =&gt; {
+    if (openTimeout != null) {
+      window.clearTimeout(openTimeout);
+      openTimeout = null;
+    }
+    pendingTrigger = null;
+  };
+  const closeTooltip = (activateSkipDelay = true) =&gt; {
+    clearOpenTimeout();
+    positionRequest += 1;
+    autoUpdateCleanup?.();
+    autoUpdateCleanup = null;
+    if (activeTrigger == null) {
+      return;
+    }
+    setDescribedBy(activeTrigger, false);
+    activeTrigger = null;
+    tooltip?.remove();
+    if (activateSkipDelay) {
+      skipDelayUntil = Date.now() + skipDelay;
+    }
+  };
+  const updatePosition = (trigger, floating) =&gt; {
+    const request = ++positionRequest;
+    void computePosition(trigger, floating, {
+      middleware: [
+        offset(tooltipGap),
+        flip({ padding: tooltipGap }),
+        shift({ padding: tooltipGap }),
+        size({
+          padding: tooltipGap,
+          apply({ availableHeight, availableWidth, elements }) {
+            elements.floating.style.setProperty(
+              &quot;--tooltip-available-width&quot;,
+              `${Math.max(0, availableWidth)}px`,
+            );
+            elements.floating.style.setProperty(
+              &quot;--tooltip-available-height&quot;,
+              `${Math.max(0, availableHeight)}px`,
+            );
+          },
+        }),
+      ],
+      placement: getPlacement(trigger),
+      strategy: &quot;fixed&quot;,
+    })
+      .then(({ x, y }) =&gt; {
+        if (activeTrigger !== trigger || request !== positionRequest) {
+          return;
+        }
+        const scale = window.devicePixelRatio || 1;
+        floating.style.transform = `translate(${Math.round(x * scale) / scale}px, ${Math.round(y * scale) / scale}px)`;
+        floating.style.visibility = &quot;visible&quot;;
+      })
+      .catch(() =&gt; {
+        if (activeTrigger === trigger &amp;&amp; request === positionRequest) {
+          closeTooltip(false);
+        }
+      });
+  };
+  const openTooltip = (trigger) =&gt; {
+    const content = getContent(trigger);
+    if (!trigger.isConnected || content.length === 0) {
+      return;
+    }
+    clearOpenTimeout();
+    if (activeTrigger === trigger) {
+      return;
+    }
+    closeTooltip();
+    const floating = getTooltip();
+    floating.textContent = content;
+    floating.style.visibility = &quot;hidden&quot;;
+    floating.style.transform = &quot;translate(0, 0)&quot;;
+    document.body.appendChild(floating);
+    activeTrigger = trigger;
+    setDescribedBy(trigger, true);
+    autoUpdateCleanup = autoUpdate(trigger, floating, () =&gt; {
+      updatePosition(trigger, floating);
+    });
+  };
+  const requestOpen = (trigger, immediate = false) =&gt; {
+    if (
+      getContent(trigger).length === 0 ||
+      activeTrigger === trigger ||
+      pendingTrigger === trigger
+    ) {
+      return;
+    }
+    clearOpenTimeout();
+    pendingTrigger = trigger;
+    const delay =
+      immediate || activeTrigger != null || Date.now() &lt; skipDelayUntil
+        ? 0
+        : hoverDelay;
+    if (delay === 0) {
+      openTooltip(trigger);
+      return;
+    }
+    openTimeout = window.setTimeout(() =&gt; {
+      openTimeout = null;
+      pendingTrigger = null;
+      openTooltip(trigger);
+    }, delay);
+  };
+  const handlePointerOpen = (event) =&gt; {
+    if (event.pointerType === &quot;touch&quot;) {
+      return;
+    }
+    const trigger = getTrigger(event.target);
+    if (trigger == null || containsTarget(trigger, event.relatedTarget)) {
+      return;
+    }
+    requestOpen(trigger);
+  };
+  const handleLeave = (event) =&gt; {
+    const trigger = getTrigger(event.target);
+    if (trigger == null || containsTarget(trigger, event.relatedTarget)) {
+      return;
+    }
+    if (activeTrigger === trigger || pendingTrigger === trigger) {
+      closeTooltip();
+    }
+  };
+  const handleFocusIn = (event) =&gt; {
+    const trigger = getTrigger(event.target);
+    if (trigger?.matches(&quot;:focus-visible&quot;)) {
+      requestOpen(trigger, true);
+    }
+  };
+  const handleKeyDown = (event) =&gt; {
+    if (event.key === &quot;Escape&quot;) {
+      closeTooltip();
+    }
+  };
+  const handleContextMenu = (event) =&gt; {
+    const trigger = getTrigger(event.target);
+    if (activeTrigger === trigger || pendingTrigger === trigger) {
+      closeTooltip();
+    }
+  };
+  const destroy = () =&gt; {
+    closeTooltip(false);
+    document.removeEventListener(&quot;pointerover&quot;, handlePointerOpen);
+    document.removeEventListener(&quot;pointerout&quot;, handleLeave);
+    document.removeEventListener(&quot;focusin&quot;, handleFocusIn);
+    document.removeEventListener(&quot;focusout&quot;, handleLeave);
+    document.removeEventListener(&quot;keydown&quot;, handleKeyDown);
+    document.removeEventListener(&quot;contextmenu&quot;, handleContextMenu);
+    tooltip = null;
+  };
+
+  document.addEventListener(&quot;pointerover&quot;, handlePointerOpen);
+  document.addEventListener(&quot;pointerout&quot;, handleLeave);
+  document.addEventListener(&quot;focusin&quot;, handleFocusIn);
+  document.addEventListener(&quot;focusout&quot;, handleLeave);
+  document.addEventListener(&quot;keydown&quot;, handleKeyDown);
+  document.addEventListener(&quot;contextmenu&quot;, handleContextMenu);
+  window.addEventListener(&quot;pagehide&quot;, destroy, { once: true });
+})();
+&lt;/script&gt;
+&lt;script id=&quot;codex-visualization-lucide&quot; async src=&quot;https://unpkg.com/lucide@1.17.0/dist/umd/lucide.js&quot;&gt;&lt;/script&gt;
+&lt;script&gt;
+(() =&gt; {
+  const initialize = () =&gt; {
+    globalThis.lucide?.createIcons({ attrs: { width: 16, height: 16 } });
+  };
+  if (globalThis.lucide != null) {
+    initialize();
+    return;
+  }
+  document
+    .getElementById(&quot;codex-visualization-lucide&quot;)
+    ?.addEventListener(&quot;load&quot;, initialize, { once: true });
+})();
+&lt;/script&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+"></iframe>
+</body>
+</html>

@@ -1,6 +1,8 @@
 local sys = require "luci.sys"
 local http = require "luci.http"
 local nixio = require "nixio"
+local jsonc = require "luci.jsonc"
+local dae_api = require "luci.model.dae_api"
 
 module("luci.controller.dae", package.seeall)
 
@@ -17,14 +19,96 @@ function index()
 	-- Status entry
 	entry({"admin", "services", "dae", "status"}, call("act_status")).leaf = true
 
-	-- Configuration pages
-	entry({"admin", "services", "dae", "global"}, cbi("dae/global"), _("Global Settings"), 1)
-	entry({"admin", "services", "dae", "dns"}, cbi("dae/dns"), _("DNS Settings"), 2)
-	entry({"admin", "services", "dae", "node"}, cbi("dae/node"), _("Node Settings"), 3)
-	entry({"admin", "services", "dae", "route"}, cbi("dae/route"), _("Routing Settings"), 4)
-	entry({"admin", "services", "dae", "log"}, cbi("dae/log"), _("Logs"), 5)
+	-- Visible pages
+	entry({"admin", "services", "dae", "dashboard"}, template("dae/dae_dashboard"), _("Dashboard"), 1)
+	entry({"admin", "services", "dae", "global"}, cbi("dae/global"), _("Global Settings"), 2)
+	entry({"admin", "services", "dae", "log"}, cbi("dae/log"), _("Logs"), 3)
+
+	-- Dashboard JSON API
+	entry({"admin", "services", "dae", "api", "state"}, call("api_state")).leaf = true
+	entry({"admin", "services", "dae", "api", "validate"}, call("api_validate")).leaf = true
+	entry({"admin", "services", "dae", "api", "save"}, call("api_save")).leaf = true
+	entry({"admin", "services", "dae", "api", "apply"}, call("api_apply")).leaf = true
+	entry({"admin", "services", "dae", "api", "mutate"}, call("api_mutate")).leaf = true
+
 	entry({"admin", "services", "dae", "get_log"}, call("get_log"))
 	entry({"admin", "services", "dae", "clear_log"}, call("clear_log"))
+end
+
+local function write_json(payload, status)
+	if status then
+		http.status(status)
+	end
+	http.prepare_content("application/json")
+	http.write_json(payload)
+end
+
+local function read_json_body()
+	local body = http.content() or ""
+	if #body > 1048576 then
+		return nil, "Request body is too large"
+	end
+	local payload = jsonc.parse(body)
+	if type(payload) ~= "table" then
+		return nil, "Invalid JSON request body"
+	end
+	return payload
+end
+
+local function require_post()
+	if http.getenv("REQUEST_METHOD") ~= "POST" then
+		write_json({ ok = false, error = { code = "METHOD_NOT_ALLOWED", message = "POST required" } }, 405)
+		return false
+	end
+	return true
+end
+
+function api_state()
+	write_json(dae_api.get_state(), 200)
+end
+
+function api_validate()
+	if not require_post() then return end
+	local payload, err = read_json_body()
+	if not payload then
+		write_json({ ok = false, error = { code = "INVALID_JSON", message = err } }, 400)
+		return
+	end
+	local response, status = dae_api.validate(payload)
+	write_json(response, status)
+end
+
+function api_mutate()
+	if not require_post() then return end
+	local payload, err = read_json_body()
+	if not payload then
+		write_json({ ok = false, error = { code = "INVALID_JSON", message = err } }, 400)
+		return
+	end
+	local response, status = dae_api.mutate(payload)
+	write_json(response, status)
+end
+
+function api_save()
+	if not require_post() then return end
+	local payload, err = read_json_body()
+	if not payload then
+		write_json({ ok = false, error = { code = "INVALID_JSON", message = err } }, 400)
+		return
+	end
+	local response, status = dae_api.save(payload, false)
+	write_json(response, status)
+end
+
+function api_apply()
+	if not require_post() then return end
+	local payload, err = read_json_body()
+	if not payload then
+		write_json({ ok = false, error = { code = "INVALID_JSON", message = err } }, 400)
+		return
+	end
+	local response, status = dae_api.save(payload, true)
+	write_json(response, status)
 end
 
 function act_status()
@@ -47,9 +131,11 @@ function act_status()
 end
 
 function get_log()
+	http.prepare_content("text/plain")
 	http.write(sys.exec("tail -n 1000 /var/log/dae/dae.log 2>/dev/null"))
 end
 
 function clear_log()
 	sys.call("true > /var/log/dae/dae.log")
+	write_json({ ok = true }, 200)
 end
