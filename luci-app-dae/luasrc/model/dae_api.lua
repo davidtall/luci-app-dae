@@ -3,6 +3,7 @@ local nixio = require "nixio"
 local sys = require "luci.sys"
 local uci = require "luci.model.uci".cursor()
 local http = require "luci.http"
+local jsonc = require "luci.jsonc"
 
 local M = {}
 
@@ -14,10 +15,21 @@ local FILES = {
 }
 
 local FILE_ORDER = { "global", "dns", "node", "routing" }
+local PERSIST_DIR = "/etc/dae/persist.d"
+local SUBSCRIPTION_CACHE_DIR = "/tmp/luci-dae-subscriptions"
+local VALID_POLICIES = {
+    min_moving_avg = true,
+    min_avg10 = true,
+    min = true,
+    random = true,
+    fixed = true
+}
 
 local function trim(value)
     return (value or ""):match("^%s*(.-)%s*$")
 end
+
+local DAE_VERSION = trim(sys.exec("dae --version 2>/dev/null | head -n 1"):match("version%s+(.+)$") or "unknown")
 
 local function read_file(path)
     return fs.readfile(path) or ""
@@ -25,6 +37,89 @@ end
 
 local function shell_quote(value)
     return "'" .. tostring(value):gsub("'", "'\\''") .. "'"
+end
+
+local BASE64_ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
+local BASE64_LOOKUP = {}
+for index = 1, #BASE64_ALPHABET do
+    BASE64_LOOKUP[BASE64_ALPHABET:sub(index, index)] = index - 1
+end
+
+local function base64_decode(value)
+    local data = tostring(value or ""):gsub("%s+", ""):gsub("-", "+"):gsub("_", "/")
+    if data == "" then return "" end
+    local remainder = #data % 4
+    if remainder == 1 then return nil end
+    if remainder > 0 then data = data .. string.rep("=", 4 - remainder) end
+
+    local output = {}
+    for index = 1, #data, 4 do
+        local a = BASE64_LOOKUP[data:sub(index, index)]
+        local b = BASE64_LOOKUP[data:sub(index + 1, index + 1)]
+        local cchar = data:sub(index + 2, index + 2)
+        local dchar = data:sub(index + 3, index + 3)
+        local c = cchar == "=" and 0 or BASE64_LOOKUP[cchar]
+        local d = dchar == "=" and 0 or BASE64_LOOKUP[dchar]
+        if a == nil or b == nil or c == nil or d == nil then return nil end
+        local number = a * 262144 + b * 4096 + c * 64 + d
+        output[#output + 1] = string.char(math.floor(number / 65536) % 256)
+        if cchar ~= "=" then output[#output + 1] = string.char(math.floor(number / 256) % 256) end
+        if dchar ~= "=" then output[#output + 1] = string.char(number % 256) end
+    end
+    return table.concat(output)
+end
+
+local function base64_url_encode(value)
+    local data = tostring(value or "")
+    local output = {}
+    for index = 1, #data, 3 do
+        local a = data:byte(index) or 0
+        local b = data:byte(index + 1) or 0
+        local c = data:byte(index + 2) or 0
+        local number = a * 65536 + b * 256 + c
+        output[#output + 1] = BASE64_ALPHABET:sub(math.floor(number / 262144) % 64 + 1, math.floor(number / 262144) % 64 + 1)
+        output[#output + 1] = BASE64_ALPHABET:sub(math.floor(number / 4096) % 64 + 1, math.floor(number / 4096) % 64 + 1)
+        output[#output + 1] = index + 1 <= #data and BASE64_ALPHABET:sub(math.floor(number / 64) % 64 + 1, math.floor(number / 64) % 64 + 1) or "="
+        output[#output + 1] = index + 2 <= #data and BASE64_ALPHABET:sub(number % 64 + 1, number % 64 + 1) or "="
+    end
+    return table.concat(output):gsub("%+", "-"):gsub("/", "_"):gsub("=+$", "")
+end
+
+local function stable_hash(value)
+    local first, second = 5381, 52711
+    for index = 1, #value do
+        local byte = value:byte(index)
+        first = (first * 33 + byte) % 2147483647
+        second = (second * 131 + byte) % 2147483647
+    end
+    return string.format("%08x%08x", math.floor(first), math.floor(second))
+end
+
+local function normalize_subscription_link(link)
+    link = trim(link)
+    if link:match("^https://") then return "https-file://" .. link:sub(9) end
+    if link:match("^http://") then return "http-file://" .. link:sub(8) end
+    return link
+end
+
+local function remote_subscription_link(link)
+    if link:match("^https%-file://") then return "https://" .. link:sub(14) end
+    if link:match("^http%-file://") then return "http://" .. link:sub(13) end
+    if link:match("^https?://") then return link end
+    return nil
+end
+
+local function is_persist_subscription_link(link)
+    return link:match("^https%-file://") ~= nil or link:match("^http%-file://") ~= nil
+end
+
+local function subscription_cache_path(id, link)
+    return SUBSCRIPTION_CACHE_DIR .. "/" .. stable_hash(id .. "\n" .. normalize_subscription_link(link)) .. ".sub"
+end
+
+local function subscription_persist_path(id)
+    if type(id) ~= "string" or not id:match("^[%w_.%-]+$") then return nil end
+    return PERSIST_DIR .. "/" .. id .. ".sub"
 end
 
 local function current_revision()
@@ -149,13 +244,162 @@ end
 
 local function link_metadata(item, source)
     local protocol = item.link:match("^([%w+.-]+)://") or "unknown"
-    local address = item.link:match("@([^:/?]+)") or item.link:match("^[%w+.-]+://([^:/?]+)") or ""
+    local address = item.link:match("@(%[[^%]]+%]:%d+)") or
+        item.link:match("@([^/?#]+)") or
+        item.link:match("^[%w+.-]+://(%[[^%]]+%]:%d+)") or
+        item.link:match("^[%w+.-]+://([^/?#]+)") or ""
     local fragment = item.link:match("#([^#]+)$")
+
+    if protocol:lower() == "vmess" then
+        local decoded = base64_decode(item.link:match("^vmess://([^#]+)") or "")
+        local config = decoded and jsonc.parse(decoded) or nil
+        if type(config) == "table" then
+            address = tostring(config.add or "")
+            if config.port and tostring(config.port) ~= "" then address = address .. ":" .. tostring(config.port) end
+            fragment = config.ps and http.urlencode(tostring(config.ps)) or fragment
+        end
+    elseif protocol:lower() == "ssr" then
+        local decoded = base64_decode(item.link:match("^ssr://([^#]+)") or "") or ""
+        local main, query = decoded:match("^(.-)/%?(.*)$")
+        main = main or decoded
+        local host, port = main:match("^([^:]+):([^:]+):")
+        if host then address = host .. ":" .. tostring(port or "") end
+        local remarks = query and query:match("remarks=([^&]+)")
+        local decoded_remarks = remarks and base64_decode(http.urldecode(remarks)) or nil
+        if decoded_remarks and decoded_remarks ~= "" then fragment = http.urlencode(decoded_remarks) end
+    end
+
     item.protocol = protocol:lower()
     item.address = address
     item.name = fragment and http.urldecode(fragment) or item.tag
     item.source = source
     return item
+end
+
+local function quote_host(host)
+    if host:find(":", 1, true) and not host:match("^%[.*%]$") then return "[" .. host .. "]" end
+    return host
+end
+
+local function resolve_subscription_links(content)
+    local sip = jsonc.parse(content)
+    if type(sip) == "table" and tonumber(sip.version) == 1 and type(sip.servers) == "table" then
+        local links = {}
+        for _, server in ipairs(sip.servers) do
+            if type(server) == "table" and server.server and server.server_port and server.method and server.password then
+                local userinfo = base64_url_encode(tostring(server.method) .. ":" .. tostring(server.password))
+                local link = "ss://" .. userinfo .. "@" .. quote_host(tostring(server.server)) .. ":" .. tostring(server.server_port)
+                if server.plugin_opts and tostring(server.plugin_opts) ~= "" then
+                    link = link .. "?plugin=" .. http.urlencode(tostring(server.plugin_opts))
+                end
+                if server.remarks and tostring(server.remarks) ~= "" then
+                    link = link .. "#" .. http.urlencode(tostring(server.remarks))
+                end
+                links[#links + 1] = link
+            end
+        end
+        if #links > 0 then return links end
+    end
+
+    local decoded = base64_decode(content)
+    if not decoded then return nil, "订阅内容不是有效的 SIP008 或 Base64" end
+    local links = {}
+    for line in decoded:gmatch("[^\r\n]+") do
+        line = trim(line)
+        if line:match("^[%w+.-]+://.+") then links[#links + 1] = line end
+    end
+    if #links == 0 then return nil, "订阅中没有可识别的节点" end
+    return links
+end
+
+local function subscription_preview(id, link, path, source)
+    if not path or not fs.access(path) then
+        return {
+            id = id,
+            tag = id,
+            name = id,
+            link = link,
+            source = "subscription",
+            previewAvailable = false,
+            previewSource = "missing",
+            status = "尚未拉取",
+            nodes = {}
+        }
+    end
+
+    local content = read_file(path)
+    local links, resolve_error = resolve_subscription_links(content)
+    local stat = fs.stat(path)
+    local subscription = {
+        id = id,
+        tag = id,
+        name = id,
+        link = link,
+        source = "subscription",
+        previewAvailable = links ~= nil,
+        previewSource = source,
+        status = links and "已解析" or "解析失败",
+        previewError = resolve_error,
+        updatedAt = stat and stat.mtime or nil,
+        nodes = {}
+    }
+    for index, node_link in ipairs(links or {}) do
+        local node = link_metadata({
+            id = id .. "::" .. stable_hash(node_link),
+            tag = id .. "-" .. tostring(index),
+            link = node_link,
+            subscriptionId = id
+        }, "subscription")
+        subscription.nodes[#subscription.nodes + 1] = node
+    end
+    return subscription
+end
+
+local function attach_subscription_preview(subscription)
+    local cache_path = subscription_cache_path(subscription.id, subscription.link)
+    local persist_path = subscription_persist_path(subscription.id)
+    local preview
+    if fs.access(cache_path) then
+        preview = subscription_preview(subscription.id, subscription.link, cache_path, "temporary")
+    elseif persist_path and fs.access(persist_path) then
+        preview = subscription_preview(subscription.id, subscription.link, persist_path, "persist")
+    else
+        preview = subscription_preview(subscription.id, subscription.link)
+    end
+    for key, value in pairs(preview) do subscription[key] = value end
+    return subscription
+end
+
+local function exact_subscription_node_name(filter)
+    if not filter:match("subtag%s*%(") then return nil end
+    local _, open_end = filter:find("name%s*%(%s*")
+    if not open_end then return nil end
+    local remainder = filter:sub(open_end + 1)
+    if remainder:match("^regex%s*:") or remainder:match("^keyword%s*:") then return nil end
+
+    local quote = remainder:sub(1, 1)
+    if quote == "'" or quote == '"' then
+        local output = {}
+        local escaped = false
+        for index = 2, #remainder do
+            local char = remainder:sub(index, index)
+            if escaped then
+                output[#output + 1] = char
+                escaped = false
+            elseif char == "\\" then
+                escaped = true
+            elseif char == quote then
+                if remainder:sub(index + 1):match("^%s*%)") then return table.concat(output) end
+                return nil
+            else
+                output[#output + 1] = char
+            end
+        end
+        return nil
+    end
+
+    local plain = trim(remainder:match("^([^,%)]+)%s*%)") or "")
+    return plain ~= "" and plain or nil
 end
 
 local function parse_named_blocks(parent)
@@ -189,9 +433,10 @@ local function parse_groups(content)
             id = entry.name,
             name = entry.name,
             policy = "min_moving_avg",
-            policyParams = {},
+            fixedIndex = nil,
             nodeIds = {},
             subscriptions = {},
+            subscriptionNodes = {},
             filters = {}
         }
 
@@ -199,8 +444,8 @@ local function parse_groups(content)
         if policy ~= "" then
             local policy_name, policy_args = policy:match("^([%w_]+)%s*%((.*)%)$")
             group.policy = policy_name or policy
-            if policy_args and trim(policy_args) ~= "" then
-                group.policyParams[#group.policyParams + 1] = { key = "value", val = trim(policy_args) }
+            if group.policy == "fixed" then
+                group.fixedIndex = tonumber(trim(policy_args or "")) or 0
             end
         end
 
@@ -208,22 +453,35 @@ local function parse_groups(content)
             local filter = trim(line:match("^%s*filter%s*:%s*(.-)%s*$"))
             if filter and filter ~= "" and not filter:match("^#") then
                 group.filters[#group.filters + 1] = filter
-                local name_args = filter:match("name%s*%((.-)%)")
-                if name_args and not name_args:match("%f[%w_]regex%s*:") and not name_args:match("%f[%w_]keyword%s*:") then
+                local subscription_id = trim(filter:match("subtag%s*%((.-)%)") or "")
+                if subscription_id ~= "" then
+                    subscription_id = subscription_id:gsub("^['\"]", ""):gsub("['\"]$", "")
+                end
+                local name_args = filter:match("^name%s*%((.-)%)$")
+                if subscription_id == "" and name_args and not name_args:match("%f[%w_]regex%s*:") and not name_args:match("%f[%w_]keyword%s*:") then
                     for _, node_id in ipairs(split_csv(name_args)) do
                         group.nodeIds[#group.nodeIds + 1] = node_id
                     end
                 end
-                local subscription_id = trim(filter:match("subtag%s*%((.-)%)") or "")
                 if subscription_id ~= "" then
-                    subscription_id = subscription_id:gsub("^['\"]", ""):gsub("['\"]$", "")
+                    local exact_name = exact_subscription_node_name(filter)
                     local regex = filter:match("name%s*%(%s*regex%s*:%s*'(.-)'%s*%)") or
                         filter:match('name%s*%(%s*regex%s*:%s*"(.-)"%s*%)')
-                    group.subscriptions[#group.subscriptions + 1] = {
-                        id = subscription_id,
-                        subscriptionId = subscription_id,
-                        nameFilterRegex = regex
-                    }
+                    if exact_name then
+                        group.subscriptionNodes[#group.subscriptionNodes + 1] = {
+                            id = filter,
+                            filterId = filter,
+                            subscriptionId = subscription_id,
+                            nodeName = exact_name
+                        }
+                    else
+                        group.subscriptions[#group.subscriptions + 1] = {
+                            id = filter,
+                            filterId = filter,
+                            subscriptionId = subscription_id,
+                            nameFilterRegex = regex
+                        }
+                    end
                 end
             end
         end
@@ -298,39 +556,53 @@ local function settings_state()
     }
 end
 
-function M.get_state()
-    local files = read_files()
-    local nodes = parse_keyable_strings(files.node.content, "node")
-    local subscriptions = parse_keyable_strings(files.node.content, "subscription")
+local function state_from_contents(contents, revision, dirty)
+    local files = {}
+    for _, key in ipairs(FILE_ORDER) do
+        files[key] = {
+            path = FILES[key],
+            content = contents[key] or ""
+        }
+    end
+
+    local nodes = parse_keyable_strings(contents.node, "node")
+    local subscriptions = parse_keyable_strings(contents.node, "subscription")
     for _, node in ipairs(nodes) do
         link_metadata(node, "manual")
     end
     for _, subscription in ipairs(subscriptions) do
         link_metadata(subscription, "subscription")
-        subscription.status = nil
-        subscription.updatedAt = nil
-        subscription.previewAvailable = false
-        subscription.nodes = {}
+        attach_subscription_preview(subscription)
     end
 
     return {
         ok = true,
-        revision = current_revision(),
+        revision = revision,
+        dirty = dirty == true,
         service = service_state(),
         settings = settings_state(),
         files = files,
         resources = {
-            global = parse_global(files.global.content),
-            dns = parse_dns(files.dns.content),
-            routing = parse_routing(files.routing.content),
+            global = parse_global(contents.global),
+            dns = parse_dns(contents.dns),
+            routing = parse_routing(contents.routing),
             nodes = nodes,
             subscriptions = subscriptions,
-            groups = parse_groups(files.node.content)
+            groups = parse_groups(contents.node)
         },
         warnings = {
             "Subscription node previews are unavailable when reading plain dae configuration files."
         }
     }
+end
+
+function M.get_state()
+    local files = read_files()
+    local contents = {}
+    for _, key in ipairs(FILE_ORDER) do
+        contents[key] = files[key].content
+    end
+    return state_from_contents(contents, current_revision(), false)
 end
 
 local function remove_tree(path)
@@ -365,6 +637,31 @@ local function snapshot_contents(payload)
     return result
 end
 
+local function prepare_subscription_persist(node_content, target_root)
+    local subscriptions = parse_keyable_strings(node_content, "subscription")
+    local target_dir = target_root .. "/persist.d"
+    local created = false
+    for _, subscription in ipairs(subscriptions) do
+        if is_persist_subscription_link(subscription.link) then
+            local cache_path = subscription_cache_path(subscription.id, subscription.link)
+            local persist_path = subscription_persist_path(subscription.id)
+            local source_path = fs.access(cache_path) and cache_path or
+                (persist_path and fs.access(persist_path) and persist_path or nil)
+            if source_path then
+                if not created then
+                    if not fs.mkdir(target_dir) then return nil, "Unable to create validation subscription cache" end
+                    fs.chmod(target_dir, "0700")
+                    created = true
+                end
+                local target_path = target_dir .. "/" .. subscription.id .. ".sub"
+                if not fs.copy(source_path, target_path) then return nil, "Unable to prepare subscription cache" end
+                fs.chmod(target_path, "0600")
+            end
+        end
+    end
+    return true
+end
+
 local function validate_contents(contents)
     local temp_root = string.format("/tmp/luci-dae-api-%d-%d", nixio.getpid(), os.time())
     local output_path = temp_root .. "/validate.log"
@@ -382,6 +679,11 @@ local function validate_contents(contents)
     fs.chmod(temp_root .. "/config.d/dns.dae", "0640")
     fs.chmod(temp_root .. "/config.d/node.dae", "0640")
     fs.chmod(temp_root .. "/config.d/route.dae", "0640")
+    local cache_ok, cache_error = prepare_subscription_persist(contents.node, temp_root)
+    if not cache_ok then
+        remove_tree(temp_root)
+        return false, cache_error, 1
+    end
     local command = "cd " .. shell_quote(temp_root) .. " && dae validate -c " ..
         shell_quote(temp_root .. "/config.dae") .. " >" .. shell_quote(output_path) .. " 2>&1"
     local code = sys.call(command)
@@ -399,6 +701,116 @@ function M.validate(payload)
         output = output,
         exitCode = code
     }, valid and 200 or 422
+end
+
+function M.preview(payload)
+    payload = payload or {}
+    local revision = current_revision()
+    if payload.revision and payload.revision ~= revision then
+        return {
+            ok = false,
+            error = {
+                code = "REVISION_CONFLICT",
+                message = "Configuration changed outside the Dashboard. Reload before continuing."
+            },
+            revision = revision
+        }, 409
+    end
+
+    local contents = snapshot_contents(payload)
+    if payload.validate == false then
+        return state_from_contents(contents, revision, true), 200
+    end
+    local valid, output, code = validate_contents(contents)
+    if not valid then
+        return { ok = false, valid = false, output = output, exitCode = code }, 422
+    end
+    return state_from_contents(contents, revision, true), 200
+end
+
+local function fetch_subscription_to_cache(id, link)
+    local remote_link = remote_subscription_link(link)
+    if not remote_link then return nil, "只支持 http、https、http-file 和 https-file 订阅" end
+
+    if not fs.access(SUBSCRIPTION_CACHE_DIR) then
+        if not fs.mkdir(SUBSCRIPTION_CACHE_DIR) then return nil, "无法创建订阅临时目录" end
+        fs.chmod(SUBSCRIPTION_CACHE_DIR, "0700")
+    end
+
+    local cache_path = subscription_cache_path(id, link)
+    local download_path = string.format("%s.download.%d", cache_path, nixio.getpid())
+    local log_path = string.format("%s.log.%d", cache_path, nixio.getpid())
+	local user_agent = string.format(
+		"dae/%s (like v2rayA/1.0 WebRequestHelper) (like v2rayN/1.0 WebRequestHelper)",
+		DAE_VERSION
+	)
+    local command = "curl --fail --location --silent --show-error" ..
+        " --connect-timeout 10 --max-time 30 --max-filesize 10485760" ..
+        " --proto " .. shell_quote("=http,https") ..
+        " --user-agent " .. shell_quote(user_agent) ..
+        " --output " .. shell_quote(download_path) ..
+        " " .. shell_quote(remote_link) ..
+        " >" .. shell_quote(log_path) .. " 2>&1"
+    local code = sys.call(command)
+    local output = trim(read_file(log_path))
+    fs.remove(log_path)
+    if code ~= 0 then
+        fs.remove(download_path)
+        return nil, output ~= "" and output or "curl 拉取订阅失败"
+    end
+
+    local stat = fs.stat(download_path)
+    if not stat or stat.size == 0 then
+        fs.remove(download_path)
+        return nil, "订阅返回内容为空"
+    end
+    if stat.size > 10485760 then
+        fs.remove(download_path)
+        return nil, "订阅内容超过 10MB 限制"
+    end
+    fs.chmod(download_path, "0600")
+    if not fs.rename(download_path, cache_path) then
+        fs.remove(download_path)
+        return nil, "无法安装订阅临时缓存"
+    end
+    return cache_path
+end
+
+function M.resolve_subscription(payload)
+    payload = payload or {}
+    local id = trim(payload.id)
+    local link = normalize_subscription_link(payload.link)
+    if not id:match("^[%w_.%-]+$") or link == "" then
+        return { ok = false, error = { code = "INVALID_SUBSCRIPTION", message = "订阅标签和地址无效" } }, 400
+    end
+
+    local cache_path = subscription_cache_path(id, link)
+    local persist_path = subscription_persist_path(id)
+    local selected_path, source
+    if payload.force ~= true and fs.access(cache_path) then
+        selected_path, source = cache_path, "temporary"
+    elseif payload.force ~= true and persist_path and fs.access(persist_path) then
+        selected_path, source = persist_path, "persist"
+    else
+        local fetch_error
+        selected_path, fetch_error = fetch_subscription_to_cache(id, link)
+        if selected_path then
+            source = "remote"
+        elseif persist_path and fs.access(persist_path) then
+            local fallback = subscription_preview(id, link, persist_path, "persist")
+            fallback.status = "远程拉取失败，使用持久缓存"
+            fallback.previewError = fetch_error
+            return { ok = true, subscription = fallback }, 200
+        else
+            return { ok = false, error = { code = "SUBSCRIPTION_FETCH_FAILED", message = fetch_error } }, 502
+        end
+    end
+
+    local subscription = subscription_preview(id, link, selected_path, source)
+    if not subscription.previewAvailable then
+        return { ok = false, error = { code = "SUBSCRIPTION_PARSE_FAILED", message = subscription.previewError } }, 422
+    end
+    return { ok = true, subscription = subscription }, 200
 end
 
 local function update_settings(settings)
@@ -424,43 +836,85 @@ end
 
 local function write_snapshot(contents)
     local pid = nixio.getpid()
-    local timestamp = os.date("%Y%m%d-%H%M%S")
     local staged = {}
-    local backups = {}
+    local rollback_root = string.format("/tmp/luci-dae-write-%d-%d", pid, os.time())
+    local originals = {}
+
+    fs.mkdir(rollback_root)
 
     for _, key in ipairs(FILE_ORDER) do
         local path = FILES[key]
         local temp_path = string.format("%s.luci-dae.%d.tmp", path, pid)
         if not fs.writefile(temp_path, contents[key]) then
             for _, item in pairs(staged) do fs.remove(item) end
+            remove_tree(rollback_root)
             return nil, "Unable to stage " .. path
         end
         fs.chmod(temp_path, "0640")
         staged[key] = temp_path
-    end
 
-    for _, key in ipairs(FILE_ORDER) do
-        local path = FILES[key]
-        local backup = path .. ".bak." .. timestamp
-        if fs.access(path) and not fs.copy(path, backup) then
-            for _, item in pairs(staged) do fs.remove(item) end
-            return nil, "Unable to back up " .. path
+        if fs.access(path) then
+            local rollback_path = rollback_root .. "/" .. key
+            if not fs.copy(path, rollback_path) then
+                for _, item in pairs(staged) do fs.remove(item) end
+                remove_tree(rollback_root)
+                return nil, "Unable to prepare rollback for " .. path
+            end
+            originals[key] = rollback_path
         end
-        backups[key] = backup
     end
 
     local installed = {}
     for _, key in ipairs(FILE_ORDER) do
         if not fs.rename(staged[key], FILES[key]) then
             for _, installed_key in ipairs(installed) do
-                fs.copy(backups[installed_key], FILES[installed_key])
+                if originals[installed_key] then
+                    fs.copy(originals[installed_key], FILES[installed_key])
+                else
+                    fs.remove(FILES[installed_key])
+                end
             end
             for _, item in pairs(staged) do fs.remove(item) end
+            remove_tree(rollback_root)
             return nil, "Unable to install " .. FILES[key]
         end
         installed[#installed + 1] = key
     end
-    return backups
+    remove_tree(rollback_root)
+    return true
+end
+
+local function promote_subscription_caches(node_content)
+    local subscriptions = parse_keyable_strings(node_content, "subscription")
+    local has_cache = false
+    for _, subscription in ipairs(subscriptions) do
+        if is_persist_subscription_link(subscription.link) and fs.access(subscription_cache_path(subscription.id, subscription.link)) then
+            has_cache = true
+            break
+        end
+    end
+    if not has_cache then return true end
+
+    if not fs.access(PERSIST_DIR) then
+        if not fs.mkdir(PERSIST_DIR) then return nil, "无法创建 " .. PERSIST_DIR end
+    end
+    fs.chmod(PERSIST_DIR, "0700")
+
+    for _, subscription in ipairs(subscriptions) do
+        local cache_path = subscription_cache_path(subscription.id, subscription.link)
+        local persist_path = subscription_persist_path(subscription.id)
+        if persist_path and is_persist_subscription_link(subscription.link) and fs.access(cache_path) then
+            local temp_path = string.format("%s.luci-dae.%d.tmp", persist_path, nixio.getpid())
+            if not fs.copy(cache_path, temp_path) then return nil, "无法暂存订阅缓存 " .. subscription.id end
+            fs.chmod(temp_path, "0600")
+            if not fs.rename(temp_path, persist_path) then
+                fs.remove(temp_path)
+                return nil, "无法安装订阅缓存 " .. subscription.id
+            end
+            fs.remove(cache_path)
+        end
+    end
+    return true
 end
 
 function M.save(payload, apply)
@@ -483,9 +937,13 @@ function M.save(payload, apply)
         return { ok = false, valid = false, output = output, exitCode = code }, 422
     end
 
-    local backups, write_error = write_snapshot(contents)
-    if not backups then
+    local written, write_error = write_snapshot(contents)
+    if not written then
         return { ok = false, error = { code = "WRITE_FAILED", message = write_error } }, 500
+    end
+    local promoted, promote_error = promote_subscription_caches(contents.node)
+    if not promoted then
+        return { ok = false, saved = true, error = { code = "SUBSCRIPTION_CACHE_FAILED", message = promote_error } }, 500
     end
     if not update_settings(payload.settings) then
         return { ok = false, saved = true, error = { code = "UCI_COMMIT_FAILED", message = "Files were saved but UCI settings could not be committed." } }, 500
@@ -518,7 +976,6 @@ function M.save(payload, apply)
         saved = true,
         applied = apply and service_code == 0 or false,
         revision = current_revision(),
-        backups = backups,
         validationOutput = output,
         service = service_state(),
         serviceAction = action,
@@ -529,6 +986,19 @@ function M.save(payload, apply)
         return response, 500
     end
     return response, 200
+end
+
+function M.reload()
+	local log_path = string.format("/tmp/luci-dae-reload.%d.log", nixio.getpid())
+	local code = sys.call("/etc/init.d/dae hot_reload >" .. shell_quote(log_path) .. " 2>&1")
+	local output = trim(read_file(log_path))
+	fs.remove(log_path)
+	return {
+		ok = code == 0,
+		serviceAction = "reload",
+		requested = code == 0,
+		serviceOutput = output
+	}, code == 0 and 200 or 500
 end
 
 local function valid_identifier(value)
@@ -628,10 +1098,8 @@ local function serialize_node_config(nodes, subscriptions, groups)
             lines[#lines + 1] = "        filter: " .. filter
         end
         local policy = group.policy or "min_moving_avg"
-        if group.policyParam and group.policyParam ~= "" then
-            policy = policy .. "(" .. group.policyParam .. ")"
-        elseif group.policyParams and group.policyParams[1] and group.policyParams[1].val then
-            policy = policy .. "(" .. group.policyParams[1].val .. ")"
+        if policy == "fixed" then
+            policy = "fixed(" .. tostring(group.fixedIndex or 0) .. ")"
         end
         lines[#lines + 1] = "        policy: " .. policy
         lines[#lines + 1] = "    }"
@@ -656,7 +1124,7 @@ function M.mutate(payload)
         return mutation_error("REVISION_CONFLICT", "Configuration changed outside the Dashboard. Reload before editing.", 409)
     end
 
-    local contents = snapshot_contents({})
+    local contents = snapshot_contents(payload)
     local nodes = parse_keyable_strings(contents.node, "node")
     local subscriptions = parse_keyable_strings(contents.node, "subscription")
     local groups = parse_groups(contents.node)
@@ -700,7 +1168,7 @@ function M.mutate(payload)
         if id ~= previous_id and find_by_id(subscriptions, id) then
             return mutation_error("DUPLICATE_SUBSCRIPTION", "A subscription with this tag already exists.", 409)
         end
-        local value = { id = id, tag = id, link = trim(payload.link) }
+        local value = { id = id, tag = id, link = normalize_subscription_link(payload.link) }
         if item then subscriptions[index] = value else subscriptions[#subscriptions + 1] = value end
         if id ~= previous_id then
             for _, group in ipairs(groups) do
@@ -732,16 +1200,18 @@ function M.mutate(payload)
             return mutation_error("DUPLICATE_GROUP", "A group with this name already exists.", 409)
         end
         if not group then
-            group = { id = id, name = id, filters = {}, policy = "min_moving_avg", policyParams = {} }
+            group = { id = id, name = id, filters = {}, policy = "min_moving_avg", fixedIndex = nil }
             groups[#groups + 1] = group
         else
             group.id = id
             group.name = id
             groups[index] = group
         end
-        if type(payload.policy) == "string" and payload.policy ~= "" then group.policy = payload.policy end
-        group.policyParam = trim(payload.policyParam or "")
-        group.policyParams = {}
+        if not VALID_POLICIES[payload.policy] then
+            return mutation_error("INVALID_POLICY", "Unsupported group policy.")
+        end
+        group.policy = payload.policy
+        group.fixedIndex = payload.policy == "fixed" and 0 or nil
     elseif action == "delete_group" then
         if not valid_identifier(payload.id) then return mutation_error("INVALID_GROUP", "A valid group name is required.") end
         local _, index = find_by_id(groups, payload.id)
@@ -761,7 +1231,13 @@ function M.mutate(payload)
         if not find_by_id(subscriptions, payload.subscriptionId) then return mutation_error("SUBSCRIPTION_NOT_FOUND", "Subscription not found.", 404) end
         local filters = {}
         for _, filter in ipairs(group.filters or {}) do
-            if filter_subscription_id(filter) ~= payload.subscriptionId then filters[#filters + 1] = filter end
+            local same_subscription = filter_subscription_id(filter) == payload.subscriptionId
+            local exact_node = exact_subscription_node_name(filter) ~= nil
+            local remove_filter = action == "group_remove_subscription" and payload.filterId and filter == payload.filterId
+            if not remove_filter and not (action == "group_add_subscription" and same_subscription and not exact_node) and
+                not (action == "group_remove_subscription" and not payload.filterId and same_subscription and not exact_node) then
+                filters[#filters + 1] = filter
+            end
         end
         if action == "group_add_subscription" then
             local filter = "subtag(" .. payload.subscriptionId .. ")"
@@ -770,22 +1246,41 @@ function M.mutate(payload)
             filters[#filters + 1] = filter
         end
         group.filters = filters
+    elseif action == "group_add_subscription_node" or action == "group_remove_subscription_node" then
+        local group = find_by_id(groups, payload.groupId)
+        if not group then return mutation_error("GROUP_NOT_FOUND", "Group not found.", 404) end
+        if not find_by_id(subscriptions, payload.subscriptionId) then return mutation_error("SUBSCRIPTION_NOT_FOUND", "Subscription not found.", 404) end
+        local node_name = trim(payload.nodeName or "")
+        if node_name == "" then return mutation_error("INVALID_SUBSCRIPTION_NODE", "Subscription node name is required.") end
+        local filters = {}
+        local found = false
+        for _, filter in ipairs(group.filters or {}) do
+            local matches = filter_subscription_id(filter) == payload.subscriptionId and exact_subscription_node_name(filter) == node_name
+            if matches then found = true end
+            if action ~= "group_remove_subscription_node" or not matches then filters[#filters + 1] = filter end
+        end
+        if action == "group_add_subscription_node" and not found then
+            filters[#filters + 1] = "subtag(" .. payload.subscriptionId .. ") && name(" .. quote_dae(node_name) .. ")"
+        end
+        group.filters = filters
     else
         return mutation_error("UNKNOWN_ACTION", "Unsupported mutation action.")
     end
 
     contents.node = serialize_node_config(nodes, subscriptions, groups)
+    if payload.preview == true then
+        return state_from_contents(contents, revision, true), 200
+    end
     local valid, output, code = validate_contents(contents)
     if not valid then
         return { ok = false, valid = false, output = output, exitCode = code }, 422
     end
-    local backups, write_error = write_snapshot(contents)
-    if not backups then
+    local written, write_error = write_snapshot(contents)
+    if not written then
         return mutation_error("WRITE_FAILED", write_error, 500)
     end
     local state = M.get_state()
     state.dirty = true
-    state.backups = backups
     return state, 200
 end
 

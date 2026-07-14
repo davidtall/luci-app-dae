@@ -4,17 +4,155 @@
 	.dae-dashboard-frame {
 		display: block;
 		width: 100%;
-		height: calc(100vh - 150px);
-		min-height: 720px;
+		height: 720px;
+		min-height: 640px;
 		border: 0;
 		background: transparent;
+	}
+
+	.dae-dashboard-actions {
+		position: static !important;
+		display: flex !important;
+		box-sizing: border-box;
+		width: 100%;
+		align-items: center;
+		justify-content: flex-end;
+		gap: .75rem !important;
+		margin-top: 1.5rem !important;
+		padding: 0 !important;
+	}
+
+	.dae-dashboard-actions > .cbi-button {
+		float: none !important;
+		margin: 0 !important;
 	}
 </style>
 
 <iframe
+	id="dae-dashboard-frame"
 	class="dae-dashboard-frame"
-	src="/luci-static/resources/dae/dashboard.html"
+	src="/luci-static/resources/dae/dashboard/index.html?v=1.1.0-r28"
 	title="DAE Dashboard"
 ></iframe>
+
+<div class="cbi-page-actions dae-dashboard-actions">
+	<input id="dae-dashboard-validate" class="btn cbi-button cbi-button-action" type="button" value="<%:Check%>" disabled="disabled" />
+	<input id="dae-dashboard-save" class="btn cbi-button cbi-button-save" type="button" value="<%:Save%>" disabled="disabled" />
+	<input id="dae-dashboard-apply" class="btn cbi-button cbi-button-apply important" type="button" value="<%:Save & Apply%>" disabled="disabled" />
+</div>
+
+<script type="text/javascript">
+(function() {
+	var frame = document.getElementById('dae-dashboard-frame');
+	var validateButton = document.getElementById('dae-dashboard-validate');
+	var saveButton = document.getElementById('dae-dashboard-save');
+	var applyButton = document.getElementById('dae-dashboard-apply');
+	var dashboardState = { dirty: false, busy: true };
+	var applyStartedAt = 0;
+	var applyDeadline = 0;
+	var applyProgressTimer = null;
+
+	function clearApplyProgress() {
+		if (applyProgressTimer !== null) {
+			window.clearTimeout(applyProgressTimer);
+			applyProgressTimer = null;
+		}
+	}
+
+	function showApplyProgress() {
+		if (!(L.ui && L.ui.changes && L.ui.changes.displayStatus))
+			return;
+
+		var remaining = Math.max(Math.ceil((applyDeadline - Date.now()) / 1000), 0);
+		L.ui.changes.displayStatus(
+			'notice spinning',
+			E('p', _('Applying configuration changes… %ds').format(remaining))
+		);
+		applyProgressTimer = window.setTimeout(showApplyProgress, 1000);
+	}
+
+	function updateButtons() {
+		validateButton.disabled = dashboardState.busy;
+		saveButton.disabled = dashboardState.busy;
+		applyButton.disabled = dashboardState.busy;
+	}
+
+	function post(message) {
+		if (frame.contentWindow)
+			frame.contentWindow.postMessage(message, window.location.origin);
+	}
+
+	function startAction(action, button) {
+		if (button.disabled)
+			return;
+		dashboardState.busy = true;
+		button.classList.add('spinning');
+		updateButtons();
+
+		if (action === 'apply') {
+			applyStartedAt = Date.now();
+			applyDeadline = applyStartedAt + Math.max(Number(L.env.apply_timeout) || 10, 5) * 1000;
+			clearApplyProgress();
+			if (L.ui && L.ui.changes && L.ui.changes.displayStatus) {
+				L.ui.changes.displayStatus('notice spinning', E('p', _('Starting configuration apply…')));
+				applyProgressTimer = window.setTimeout(showApplyProgress, 250);
+			}
+		}
+
+		post({ source: 'luci-app-dae-page', type: 'action', action: action });
+	}
+
+	function finishApply(ok) {
+		clearApplyProgress();
+		var wait = Math.max(900 - (Date.now() - applyStartedAt), 0);
+		window.setTimeout(function() {
+			if (!(L.ui && L.ui.changes && L.ui.changes.displayStatus))
+				return;
+			L.ui.changes.displayStatus(
+				ok ? 'notice' : 'warning',
+				E('p', ok ? _('Configuration changes applied.') : _('Error'))
+			);
+			window.setTimeout(function() {
+				L.ui.changes.displayStatus(false);
+			}, ok ? 1200 : 4000);
+		}, wait);
+	}
+
+	validateButton.addEventListener('click', function() { startAction('validate', validateButton); });
+	saveButton.addEventListener('click', function() { startAction('save', saveButton); });
+	applyButton.addEventListener('click', function() { startAction('apply', applyButton); });
+
+	frame.addEventListener('load', function() {
+		post({ source: 'luci-app-dae-page', type: 'request-state' });
+	});
+
+	window.addEventListener('message', function(event) {
+		if (event.source !== frame.contentWindow || event.origin !== window.location.origin)
+			return;
+		var data = event.data || {};
+		if (data.source !== 'luci-app-dae-dashboard')
+			return;
+
+		if (data.type === 'state') {
+			dashboardState.dirty = data.dirty === true;
+			dashboardState.busy = data.busy === true;
+			updateButtons();
+		}
+		else if (data.type === 'resize') {
+			var height = Math.max(640, Math.min(Number(data.height) || 720, 2400));
+			frame.style.height = height + 'px';
+		}
+		else if (data.type === 'result') {
+			validateButton.classList.remove('spinning');
+			saveButton.classList.remove('spinning');
+			applyButton.classList.remove('spinning');
+			if (data.action === 'apply')
+				finishApply(data.ok === true);
+		}
+	});
+
+	updateButtons();
+})();
+</script>
 
 <%+footer%>

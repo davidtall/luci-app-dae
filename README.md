@@ -48,4 +48,4 @@ make package/dae/luci-app-dae/compile V=s # build luci-app-dae
 
 -----------
 
-![dae](https://raw.githubusercontent.com/QiuSimons/luci-app-dae/refs/heads/next/image.jpg)
+![dae](https://raw.githubusercontent.com/davidtall/luci-app-dae/refs/heads/next/image.png)

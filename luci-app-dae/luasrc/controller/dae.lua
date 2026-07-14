@@ -20,15 +20,18 @@ function index()
 	entry({"admin", "services", "dae", "status"}, call("act_status")).leaf = true
 
 	-- Visible pages
-	entry({"admin", "services", "dae", "dashboard"}, template("dae/dae_dashboard"), _("Dashboard"), 1)
-	entry({"admin", "services", "dae", "global"}, cbi("dae/global"), _("Global Settings"), 2)
+	entry({"admin", "services", "dae", "global"}, cbi("dae/global"), _("Global Settings"), 1)
+	entry({"admin", "services", "dae", "dashboard"}, template("dae/dae_dashboard"), _("Dashboard"), 2)
 	entry({"admin", "services", "dae", "log"}, cbi("dae/log"), _("Logs"), 3)
 
 	-- Dashboard JSON API
 	entry({"admin", "services", "dae", "api", "state"}, call("api_state")).leaf = true
+	entry({"admin", "services", "dae", "api", "preview"}, call("api_preview")).leaf = true
+	entry({"admin", "services", "dae", "api", "subscription", "resolve"}, call("api_subscription_resolve")).leaf = true
 	entry({"admin", "services", "dae", "api", "validate"}, call("api_validate")).leaf = true
 	entry({"admin", "services", "dae", "api", "save"}, call("api_save")).leaf = true
 	entry({"admin", "services", "dae", "api", "apply"}, call("api_apply")).leaf = true
+	entry({"admin", "services", "dae", "api", "reload"}, call("api_reload")).leaf = true
 	entry({"admin", "services", "dae", "api", "mutate"}, call("api_mutate")).leaf = true
 
 	entry({"admin", "services", "dae", "get_log"}, call("get_log"))
@@ -39,6 +42,7 @@ local function write_json(payload, status)
 	if status then
 		http.status(status)
 	end
+	http.header("Cache-Control", "no-store")
 	http.prepare_content("application/json")
 	http.write_json(payload)
 end
@@ -78,6 +82,28 @@ function api_validate()
 	write_json(response, status)
 end
 
+function api_preview()
+	if not require_post() then return end
+	local payload, err = read_json_body()
+	if not payload then
+		write_json({ ok = false, error = { code = "INVALID_JSON", message = err } }, 400)
+		return
+	end
+	local response, status = dae_api.preview(payload)
+	write_json(response, status)
+end
+
+function api_subscription_resolve()
+	if not require_post() then return end
+	local payload, err = read_json_body()
+	if not payload then
+		write_json({ ok = false, error = { code = "INVALID_JSON", message = err } }, 400)
+		return
+	end
+	local response, status = dae_api.resolve_subscription(payload)
+	write_json(response, status)
+end
+
 function api_mutate()
 	if not require_post() then return end
 	local payload, err = read_json_body()
@@ -108,6 +134,12 @@ function api_apply()
 		return
 	end
 	local response, status = dae_api.save(payload, true)
+	write_json(response, status)
+end
+
+function api_reload()
+	if not require_post() then return end
+	local response, status = dae_api.reload()
 	write_json(response, status)
 end
 
