@@ -11,13 +11,14 @@ PROG="/usr/bin/dae"
 LOG="/var/log/dae/dae.log"
 DAE_HOST_IFACE="dae0"
 DAE_PEER_IFACE="dae0peer"
-DAENETNS="/run/netns/daens"
+DAE_NETNS_NAME="daens"
+DAENETNS="/run/netns/$DAE_NETNS_NAME"
 RESOLV_DAE="/tmp/resolv.conf.dae"
 
 set_chmod_640() {
-    chmod -R 640 /etc/dae/ 2>/dev/null || true
     mkdir -p /etc/dae/config.d
     mkdir -p /var/log/dae
+    chmod -R 640 /etc/dae/ 2>/dev/null || true
 }
 
 update_cron() {
