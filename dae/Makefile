@@ -117,6 +117,11 @@ define Package/dae/install
 	$(INSTALL_DIR) $(1)/etc/dae/
 	$(INSTALL_DIR) $(1)/etc/dae/config.d
 	$(INSTALL_CONF) $(PKG_BUILD_DIR)/example.dae $(1)/etc/dae/
+	$(INSTALL_CONF) $(CURDIR)/files/config.dae $(1)/etc/dae/config.dae
+	$(INSTALL_DIR) $(1)/etc/dae/config.d/
+	$(INSTALL_CONF) $(CURDIR)/files/config.d/dns.dae $(1)/etc/dae/config.d/dns.dae
+	$(INSTALL_CONF) $(CURDIR)/files/config.d/node.dae $(1)/etc/dae/config.d/node.dae
+	$(INSTALL_CONF) $(CURDIR)/files/config.d/route.dae $(1)/etc/dae/config.d/route.dae
 	$(INSTALL_DIR) $(1)/etc/config
 	$(INSTALL_CONF) $(CURDIR)/files/dae.config $(1)/etc/config/dae
 	$(INSTALL_DIR) $(1)/etc/init.d
