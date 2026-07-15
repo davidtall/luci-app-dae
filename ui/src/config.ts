@@ -45,6 +45,14 @@ function replaceBlockBody(content: string, block: BlockRange, body: string): str
   return content.slice(0, block.open + 1) + body + content.slice(block.close)
 }
 
+function removeBlock(content: string, block: BlockRange): string {
+  const lineStart = content.lastIndexOf('\n', block.open) + 1
+  let end = block.close + 1
+  if (content.slice(end, end + 2) === '\r\n') end += 2
+  else if (content[end] === '\n') end += 1
+  return content.slice(0, lineStart) + content.slice(end)
+}
+
 function activeRule(line: string): boolean {
   const value = line.trim()
   return !!value && !value.startsWith('#') && (value.includes('->') || /^fallback\s*:/.test(value))
@@ -213,13 +221,32 @@ export function updateDnsFromForm(content: string, values: DnsFormValues): strin
     activeRule,
     '            ',
   )
-  routingBody = replaceBlockActiveLines(
-    routingBody,
-    'response',
-    ruleLines(values.responseRules),
-    activeRule,
-    '            ',
-  )
+  const responseRules = ruleLines(values.responseRules)
+  const responseBlock = namedBlock(routingBody, 'response')
+  if (responseRules.length === 0) {
+    // DAE permits omitting the response block, but rejects an empty one.
+    if (responseBlock) routingBody = removeBlock(routingBody, responseBlock)
+  } else if (responseBlock) {
+    routingBody = replaceBlockBody(
+      routingBody,
+      responseBlock,
+      replaceActiveLines(
+        routingBody.slice(responseBlock.open + 1, responseBlock.close),
+        responseRules,
+        activeRule,
+        '            ',
+      ),
+    )
+  } else {
+    const newline = routingBody.includes('\r\n') ? '\r\n' : '\n'
+    const trimmed = routingBody.replace(/\s*$/, '')
+    const responseBlockText = [
+      '        response {',
+      ...responseRules.map((rule) => `            ${rule}`),
+      '        }',
+    ].join(newline)
+    routingBody = `${trimmed}${newline}${newline}${responseBlockText}${newline}`
+  }
   body = replaceBlockBody(body, routing.block, routingBody)
   return replaceBlockBody(content, dns.block, body)
 }
