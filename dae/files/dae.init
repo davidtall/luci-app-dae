@@ -110,15 +110,21 @@ restore_resolv_conf() {
 start_service() {
     local enabled config_file log_maxbackups log_maxsize
 
+    if /etc/init.d/dae running; then
+        logger -t dae "skip duplicate start: dae is already running"
+        return 0
+    fi
+
     uci commit "$CONF" 2>/dev/null
     config_load "$CONF"
     config_get_bool enabled "config" "enabled" "0"
     [ "$enabled" -eq "1" ] || return 1
 
+    set_chmod_640
+
     config_get config_file "config" "config_file" "/etc/dae/config.dae"
     "$PROG" validate -c "$config_file" || return 1
 
-    set_chmod_640
     update_cron "add"
     hijack_resolv_conf
 	cleanup_netns
@@ -155,11 +161,11 @@ service_stopped() {
 	fi
 }
 
-service_triggers() {
-    procd_add_reload_trigger "$CONF"
-}
-
 hot_reload() {
     set_chmod_640
     /etc/init.d/dae running && "$PROG" reload
+}
+
+reload_service() {
+    hot_reload
 }

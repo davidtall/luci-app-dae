@@ -11,12 +11,13 @@ import NodePanel from './components/NodePanel.vue'
 import PickerDialog from './components/PickerDialog.vue'
 import RoutingConfigDialog from './components/RoutingConfigDialog.vue'
 import SourceEditorDialog from './components/SourceEditorDialog.vue'
+import ServiceSettingsPanel from './components/ServiceSettingsPanel.vue'
 import SubscriptionDialog from './components/SubscriptionDialog.vue'
 import SubscriptionPanel from './components/SubscriptionPanel.vue'
 import { updateDnsFromForm, updateGlobalFromForm, updateRoutingFromForm } from './config'
 import type { DnsFormValues, GlobalFormValues, RoutingFormValues } from './config'
 import { useDaeDashboard } from './composables/useDaeDashboard'
-import type { DaeGroup, DaeNode, DaeSubscription } from './types'
+import type { DaeGroup, DaeNode, DaeSettings, DaeSubscription } from './types'
 
 const dashboard = useDaeDashboard()
 const {
@@ -32,12 +33,16 @@ const {
   resolvingSubscriptions,
   showToast,
   loadState,
+  pollServiceState,
   mutate,
   resolveSubscription,
   stageFile,
+  stageSettings,
   validateConfig,
   saveConfig,
   applyConfig,
+  reloadService,
+  restartService,
 } = dashboard
 
 const nodeDialogOpen = ref(false)
@@ -51,6 +56,7 @@ const dnsDialogOpen = ref(false)
 const routingDialogOpen = ref(false)
 const sourceKey = ref<'global' | 'dns' | 'node' | 'routing' | null>(null)
 let resizeObserver: ResizeObserver | null = null
+let servicePollTimer: ReturnType<typeof window.setInterval> | null = null
 
 const pickerOpen = ref(false)
 const pickerType = ref<'node' | 'subscription'>('node')
@@ -176,6 +182,10 @@ async function saveGlobal(values: GlobalFormValues) {
   }
 }
 
+function updateServiceSetting(key: keyof DaeSettings, value: boolean | string) {
+  stageSettings({ [key]: value } as Partial<DaeSettings>)
+}
+
 async function saveDns(values: DnsFormValues) {
   if (!state.value) return
   try {
@@ -200,11 +210,17 @@ async function reloadDashboard() {
   if (dirty.value && !window.confirm('当前有未保存修改，重载会丢弃这些修改，是否继续？')) return
   try {
     await loadState()
+    await reloadService()
     await postParentHeight()
     showToast('配置已重载')
   } catch {
     // loadState already displays the error toast.
   }
+}
+
+async function restartDae() {
+  if (dirty.value && !window.confirm('当前有未保存修改，重启将使用已保存配置，是否继续？')) return
+  await restartService()
 }
 
 function warnUnsavedChanges(event: BeforeUnloadEvent) {
@@ -263,12 +279,16 @@ onMounted(() => {
   resizeObserver = new ResizeObserver(() => postParentHeight())
   resizeObserver.observe(document.body)
   loadState().then(postParentHeight).catch(() => undefined)
+  servicePollTimer = window.setInterval(() => {
+    pollServiceState().catch(() => undefined)
+  }, 5000)
 })
 
 onBeforeUnmount(() => {
   window.removeEventListener('beforeunload', warnUnsavedChanges)
   window.removeEventListener('message', handleParentAction)
   resizeObserver?.disconnect()
+  if (servicePollTimer !== null) window.clearInterval(servicePollTimer)
 })
 </script>
 
@@ -277,13 +297,16 @@ onBeforeUnmount(() => {
     <AppHeader
       :version="state?.service.version"
       :running="state?.service.running || false"
-      :enabled="state?.service.enabled || false"
+      :enabled="state?.settings.enabled || false"
+      :memory-kb="state?.service.memoryKb"
       :busy="busy || loading"
       @reload="reloadDashboard"
+      @restart="restartDae"
     />
 
     <div v-if="loading && !state" class="loading-state">正在读取 dae 配置…</div>
     <main v-else-if="state" class="workspace">
+      <ServiceSettingsPanel :settings="state.settings" :busy="busy" @update="updateServiceSetting" />
       <ConfigPanel
         :state="state"
         @edit-global="globalDialogOpen = true"

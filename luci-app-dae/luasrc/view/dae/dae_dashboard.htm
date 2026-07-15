@@ -91,7 +91,7 @@
 
 		if (action === 'apply') {
 			applyStartedAt = Date.now();
-			applyDeadline = applyStartedAt + Math.max(Number(L.env.apply_timeout) || 10, 5) * 1000;
+			applyDeadline = applyStartedAt + Math.max(Number(L.env.apply_rollback) || 90, 5) * 1000;
 			clearApplyProgress();
 			if (L.ui && L.ui.changes && L.ui.changes.displayStatus) {
 				L.ui.changes.displayStatus('notice spinning', E('p', _('Starting configuration apply…')));

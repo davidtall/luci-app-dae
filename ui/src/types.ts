@@ -78,6 +78,16 @@ export interface DaeRoutingConfig {
   fallback?: string
 }
 
+export interface DaeSettings {
+  enabled: boolean
+  configFile?: string
+  logMaxBackups?: string
+  logMaxSize?: string
+  subscribeAutoUpdate: boolean
+  subscribeUpdateWeekTime: string
+  subscribeUpdateDayTime: string
+}
+
 export interface DaeState {
   ok: boolean
   revision: string
@@ -89,7 +99,7 @@ export interface DaeState {
     memoryKb?: number
     version?: string
   }
-  settings: Record<string, unknown>
+  settings: DaeSettings
   files: {
     global: DaeFile
     dns: DaeFile
@@ -119,5 +129,6 @@ export interface ApiErrorBody {
 
 export interface ApplyResult extends ApiErrorBody {
   serviceAction?: string
+  servicePending?: boolean
   revision?: string
 }

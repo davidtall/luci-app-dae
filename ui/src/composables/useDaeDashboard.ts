@@ -1,6 +1,6 @@
 import { computed, ref } from 'vue'
-import { request } from '../api'
-import type { ApplyResult, DaeGroup, DaeNode, DaeState, DaeSubscription, GroupSubscription, GroupSubscriptionNode } from '../types'
+import { request, requestServiceStatus } from '../api'
+import type { ApplyResult, DaeGroup, DaeNode, DaeState, DaeSubscription, DaeSettings, GroupSubscription, GroupSubscriptionNode } from '../types'
 
 function asArray<T>(value: unknown): T[] {
   if (Array.isArray(value)) return value as T[]
@@ -112,6 +112,25 @@ export function useDaeDashboard() {
     }
   }
 
+  async function pollServiceState() {
+    if (!state.value) return false
+    try {
+      const result = await requestServiceStatus()
+      const memoryMb = result.memory ? Number.parseFloat(result.memory) : Number.NaN
+      if (state.value) {
+        state.value.service = {
+          ...state.value.service,
+          running: result.running,
+          pid: result.running ? state.value.service.pid : undefined,
+          memoryKb: Number.isFinite(memoryMb) ? Math.round(memoryMb * 1024) : undefined,
+        }
+      }
+      return true
+    } catch {
+      return false
+    }
+  }
+
   async function hydrateSubscriptions() {
     const queue = subscriptions.value.filter((item) => !item.previewAvailable).map((item) => item.id)
     const workers = Array.from({ length: Math.min(3, queue.length) }, async () => {
@@ -167,6 +186,14 @@ export function useDaeDashboard() {
     }
   }
 
+  function stageSettings(values: Partial<DaeSettings>, message = '服务设置修改已暂存') {
+    if (!state.value) return false
+    state.value.settings = { ...state.value.settings, ...values }
+    dirty.value = true
+    showToast(message)
+    return true
+  }
+
   async function validateConfig() {
     if (!state.value) return false
     busy.value = true
@@ -189,6 +216,7 @@ export function useDaeDashboard() {
       await request<ApplyResult>('save', {
         revision: state.value.revision,
         files: currentFiles(),
+        settings: state.value.settings,
       })
       await loadState()
       showToast('配置已保存到文件，dae 尚未重载')
@@ -208,13 +236,15 @@ export function useDaeDashboard() {
       const result = await request<ApplyResult>('apply', {
         revision: state.value.revision,
         files: currentFiles(),
+        settings: state.value.settings,
       })
       await loadState()
       dirty.value = false
+      const serviceAction = result.serviceAction?.replace(/_started$/, '')
       showToast(
-        result.serviceAction === 'reload'
+        serviceAction === 'reload'
           ? '配置已保存，dae 热重载成功'
-          : `配置已保存，dae 已执行 ${result.serviceAction || '应用'}`,
+          : `配置已保存，dae 已执行 ${serviceAction || '应用'}`,
       )
       return true
     } catch (error) {
@@ -230,8 +260,27 @@ export function useDaeDashboard() {
     showToast('正在重载 dae 服务…')
     try {
       await request<ApplyResult>('reload', {})
-      await loadState()
       showToast('dae 服务已重载')
+      window.setTimeout(() => {
+        loadState().catch(() => undefined)
+      }, 1500)
+      return true
+    } catch (error) {
+      showToast((error as Error).message, true)
+      return false
+    } finally {
+      busy.value = false
+    }
+  }
+
+  async function restartService() {
+    busy.value = true
+    try {
+      await request<ApplyResult>('restart', {})
+      showToast('dae 服务重启已发起')
+      window.setTimeout(() => {
+        loadState().catch(() => undefined)
+      }, 1500)
       return true
     } catch (error) {
       showToast((error as Error).message, true)
@@ -254,12 +303,15 @@ export function useDaeDashboard() {
     resolvingSubscriptions,
     showToast,
     loadState,
+    pollServiceState,
     mutate,
     resolveSubscription,
     stageFile,
+    stageSettings,
     validateConfig,
     saveConfig,
     applyConfig,
     reloadService,
+    restartService,
   }
 }

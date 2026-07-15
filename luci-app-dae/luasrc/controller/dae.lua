@@ -20,9 +20,11 @@ function index()
 	entry({"admin", "services", "dae", "status"}, call("act_status")).leaf = true
 
 	-- Visible pages
-	entry({"admin", "services", "dae", "global"}, cbi("dae/global"), _("Global Settings"), 1)
-	entry({"admin", "services", "dae", "dashboard"}, template("dae/dae_dashboard"), _("Dashboard"), 2)
-	entry({"admin", "services", "dae", "log"}, cbi("dae/log"), _("Logs"), 3)
+	-- The dashboard now contains the settings previously shown on the global page.
+	-- Keep the legacy page out of the menu to avoid duplicate configuration entries.
+	-- entry({"admin", "services", "dae", "global"}, cbi("dae/global"), _("Global Settings"), 1)
+	entry({"admin", "services", "dae", "dashboard"}, template("dae/dae_dashboard"), _("Dashboard"), 1)
+	entry({"admin", "services", "dae", "log"}, cbi("dae/log"), _("Logs"), 2)
 
 	-- Dashboard JSON API
 	entry({"admin", "services", "dae", "api", "state"}, call("api_state")).leaf = true
@@ -32,6 +34,7 @@ function index()
 	entry({"admin", "services", "dae", "api", "save"}, call("api_save")).leaf = true
 	entry({"admin", "services", "dae", "api", "apply"}, call("api_apply")).leaf = true
 	entry({"admin", "services", "dae", "api", "reload"}, call("api_reload")).leaf = true
+	entry({"admin", "services", "dae", "api", "restart"}, call("api_restart")).leaf = true
 	entry({"admin", "services", "dae", "api", "mutate"}, call("api_mutate")).leaf = true
 
 	entry({"admin", "services", "dae", "get_log"}, call("get_log"))
@@ -140,6 +143,12 @@ end
 function api_reload()
 	if not require_post() then return end
 	local response, status = dae_api.reload()
+	write_json(response, status)
+end
+
+function api_restart()
+	if not require_post() then return end
+	local response, status = dae_api.restart()
 	write_json(response, status)
 end
 

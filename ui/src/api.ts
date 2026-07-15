@@ -29,3 +29,14 @@ export async function request<T>(path: string, payload?: unknown): Promise<T> {
   }
   return data
 }
+
+export async function requestServiceStatus(): Promise<{ running: boolean; memory?: string }> {
+  const response = await fetch('/cgi-bin/luci/admin/services/dae/status', {
+    cache: 'no-store',
+    credentials: 'same-origin',
+    headers: { Accept: 'application/json' },
+  })
+  const data = (await response.json().catch(() => ({}))) as { running?: boolean; memory?: string }
+  if (!response.ok) throw new Error(`请求失败（HTTP ${response.status}）`)
+  return { running: data.running === true, memory: data.memory }
+}

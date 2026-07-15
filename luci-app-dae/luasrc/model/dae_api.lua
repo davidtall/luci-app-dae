@@ -953,21 +953,26 @@ function M.save(payload, apply)
     local action = "none"
     local service_output = ""
     local service_code = 0
+    local service_pending = false
     if apply then
         if service.enabled then
             if service.running then
                 action = "reload"
-                service_code = sys.call("/etc/init.d/dae hot_reload >/tmp/luci-dae-service.log 2>&1")
+                service_code = sys.call("rm -f /tmp/luci-dae-service.log; /etc/init.d/dae hot_reload >/tmp/luci-dae-service.log 2>&1 &")
             else
                 action = "start"
                 service_code = sys.call("/etc/init.d/dae start >/tmp/luci-dae-service.log 2>&1")
+                service_output = read_file("/tmp/luci-dae-service.log")
+                fs.remove("/tmp/luci-dae-service.log")
             end
         else
             action = "stop"
             service_code = sys.call("/etc/init.d/dae stop >/tmp/luci-dae-service.log 2>&1")
+            service_output = read_file("/tmp/luci-dae-service.log")
+            fs.remove("/tmp/luci-dae-service.log")
         end
-        service_output = read_file("/tmp/luci-dae-service.log")
-        fs.remove("/tmp/luci-dae-service.log")
+        service_pending = service_code == 0
+        if service_pending then action = action .. "_started" end
     end
 
     local response = {
@@ -979,7 +984,8 @@ function M.save(payload, apply)
         validationOutput = output,
         service = service_state(),
         serviceAction = action,
-        serviceOutput = service_output
+        serviceOutput = service_output,
+        servicePending = service_pending
     }
     if service_code ~= 0 then
         response.error = { code = "SERVICE_ACTION_FAILED", message = "Configuration was saved, but the service action failed." }
@@ -990,15 +996,21 @@ end
 
 function M.reload()
 	local log_path = string.format("/tmp/luci-dae-reload.%d.log", nixio.getpid())
-	local code = sys.call("/etc/init.d/dae hot_reload >" .. shell_quote(log_path) .. " 2>&1")
-	local output = trim(read_file(log_path))
-	fs.remove(log_path)
+	local code = sys.call("rm -f " .. shell_quote(log_path) .. "; /etc/init.d/dae hot_reload >" .. shell_quote(log_path) .. " 2>&1 &")
 	return {
 		ok = code == 0,
-		serviceAction = "reload",
-		requested = code == 0,
-		serviceOutput = output
+		serviceAction = "reload_started",
+		requested = code == 0
 	}, code == 0 and 200 or 500
+end
+
+function M.restart()
+    local code = sys.call("/etc/init.d/dae restart >/tmp/luci-dae-restart.log 2>&1 &")
+    return {
+        ok = code == 0,
+        serviceAction = "restart_started",
+        requested = code == 0
+    }, code == 0 and 200 or 500
 end
 
 local function valid_identifier(value)
