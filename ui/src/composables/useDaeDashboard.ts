@@ -79,7 +79,7 @@ export function useDaeDashboard() {
     }
   }
 
-  async function resolveSubscription(id: string, force = false, notify = false) {
+  async function resolveSubscription(id: string, force = false, notify = false, allowPersistFallback = true) {
     if (!state.value || resolvingSubscriptions.value.has(id)) return false
     const current = state.value.resources.subscriptions.find((item) => item.id === id)
     if (!current) return false
@@ -90,6 +90,7 @@ export function useDaeDashboard() {
         id,
         link: requestedLink,
         force,
+        allowPersistFallback,
       })
       const target = state.value?.resources.subscriptions.find((item) => item.id === id && item.link === requestedLink)
       if (target) {

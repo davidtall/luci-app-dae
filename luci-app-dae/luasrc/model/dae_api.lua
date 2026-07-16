@@ -780,6 +780,7 @@ function M.resolve_subscription(payload)
     payload = payload or {}
     local id = trim(payload.id)
     local link = normalize_subscription_link(payload.link)
+    local allow_persist_fallback = payload.allowPersistFallback ~= false
     if not id:match("^[%w_.%-]+$") or link == "" then
         return { ok = false, error = { code = "INVALID_SUBSCRIPTION", message = "订阅标签和地址无效" } }, 400
     end
@@ -796,7 +797,7 @@ function M.resolve_subscription(payload)
         selected_path, fetch_error = fetch_subscription_to_cache(id, link)
         if selected_path then
             source = "remote"
-        elseif persist_path and fs.access(persist_path) then
+        elseif allow_persist_fallback and persist_path and fs.access(persist_path) then
             local fallback = subscription_preview(id, link, persist_path, "persist")
             fallback.status = "远程拉取失败，使用持久缓存"
             fallback.previewError = fetch_error

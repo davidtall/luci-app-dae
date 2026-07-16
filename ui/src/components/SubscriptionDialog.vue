@@ -12,13 +12,20 @@ const emit = defineEmits<{
 
 const form = reactive({ previousId: '', id: '', link: '' })
 
+function displaySubscriptionLink(link: string) {
+  const value = link.trim()
+  if (value.startsWith('https-file://')) return `https://${value.slice('https-file://'.length)}`
+  if (value.startsWith('http-file://')) return `http://${value.slice('http-file://'.length)}`
+  return value
+}
+
 watch(
   () => [props.open, props.item] as const,
   ([open, item]) => {
     if (!open) return
     form.previousId = item?.id || ''
     form.id = item?.id || ''
-    form.link = item?.link || ''
+    form.link = displaySubscriptionLink(item?.link || '')
   },
   { immediate: true },
 )
@@ -35,7 +42,7 @@ watch(
         <span>订阅地址</span>
         <textarea v-model.trim="form.link" rows="4" placeholder="https://example.com/subscription" />
       </label>
-      <p class="form-hint form-span">确认后会立即拉取并预览节点；正式保存时 HTTP/HTTPS 地址会转换为 http-file/https-file，由 dae 持久化订阅内容。</p>
+      <p class="form-hint form-span">编辑时显示标准 HTTP/HTTPS 地址；确认后会立即拉取并预览节点，保存到 dae 源码时会转换为 http-file/https-file。</p>
     </div>
     <template #footer>
       <button v-if="item" type="button" class="btn btn-danger mr-auto" :disabled="busy" @click="$emit('remove', form.previousId)">删除</button>

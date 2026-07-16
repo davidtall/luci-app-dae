@@ -106,6 +106,13 @@ function openPicker(type: 'node' | 'subscription', group: DaeGroup, initialIds: 
   pickerOpen.value = true
 }
 
+function canonicalSubscriptionLink(link: string) {
+  const value = link.trim()
+  if (value.startsWith('https://')) return `https-file://${value.slice('https://'.length)}`
+  if (value.startsWith('http://')) return `http-file://${value.slice('http://'.length)}`
+  return value
+}
+
 async function saveNode(values: { previousId: string; id: string; link: string }) {
   if (await mutate('upsert_node', values, '节点修改已暂存')) nodeDialogOpen.value = false
 }
@@ -115,9 +122,20 @@ async function deleteNode(id: string) {
 }
 
 async function saveSubscription(values: { previousId: string; id: string; link: string }) {
+  const existing = subscriptions.value.find((item) => item.id === values.previousId)
+  const linkChanged = !existing || canonicalSubscriptionLink(existing.link) !== canonicalSubscriptionLink(values.link)
   if (await mutate('upsert_subscription', values, '订阅修改已暂存')) {
     subscriptionDialogOpen.value = false
-    await resolveSubscription(values.id, true, true)
+    if (!linkChanged) {
+      showToast(`${values.id} 已保存，保留现有订阅缓存`)
+      return
+    }
+
+    const resolved = await resolveSubscription(values.id, true, true, false)
+    if (!resolved && existing) {
+      await loadState()
+      showToast(`${values.id} 的新地址拉取失败，已保留原订阅配置`, true)
+    }
   }
 }
 

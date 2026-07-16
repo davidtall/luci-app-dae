@@ -29,7 +29,6 @@ watch(
 const targetOptions = computed(() => [
   ...new Set([
     ...form.upstreams.map((item) => item.id.trim()).filter(Boolean),
-    'accept',
     'reject',
   ]),
 ])
@@ -92,18 +91,20 @@ function save() {
     <RuleListEditor
       v-model="form.requestRules"
       title="请求路由"
-      hint="匹配 DNS 请求并选择上游；fallback 可直接填写在匹配条件中。"
+      hint="匹配 DNS 请求并选择上游或 reject；fallback 可直接填写在匹配条件中。"
       condition-placeholder="例如 qname(geosite:gfw) 或 fallback"
-      target-placeholder="例如 overseadns"
+      target-placeholder="请选择上游或 reject"
       :target-options="targetOptions"
+      target-select
     />
     <RuleListEditor
       v-model="form.responseRules"
       title="响应路由"
-      hint="按上游、域名或 IP 等响应条件决定 accept、reject 或切换上游。"
+      hint="按上游、域名或 IP 等响应条件选择上游或 reject。"
       condition-placeholder="例如 upstream(overseadns) 或 fallback"
-      target-placeholder="例如 accept"
+      target-placeholder="请选择上游或 reject"
       :target-options="targetOptions"
+      target-select
     />
 
     <p v-if="validationError" class="form-error">{{ validationError }}</p>

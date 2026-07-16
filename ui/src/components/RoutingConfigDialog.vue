@@ -26,11 +26,15 @@ watch(
 
 const targetOptions = computed(() => [
   ...new Set([
-    ...props.groups.map((group) => group.id).filter(Boolean),
     'direct',
-    'must_direct',
     'block',
+    'must_direct',
+    ...props.groups.map((group) => group.id.trim()).filter(Boolean),
   ]),
+])
+
+const fallbackOptions = computed(() => [
+  ...new Set([...(targetOptions.value || []), form.fallback.trim()].filter(Boolean)),
 ])
 
 const validationError = computed(() => {
@@ -60,8 +64,9 @@ function save() {
       title="路由规则"
       hint="左侧填写 dae 匹配表达式，右侧填写群组或 direct、must_direct、block。"
       condition-placeholder="例如 domain(geosite:gfw)"
-      target-placeholder="例如 proxy"
+      target-placeholder="请选择目标"
       :target-options="targetOptions"
+      target-select
     />
 
     <section class="visual-section">
@@ -71,11 +76,11 @@ function save() {
       </div>
       <label class="field routing-fallback-field">
         <span>fallback</span>
-        <input v-model.trim="form.fallback" list="dae-routing-targets" placeholder="例如 proxy" />
+        <select v-model="form.fallback" aria-label="fallback">
+          <option value="" disabled>请选择默认目标</option>
+          <option v-for="option in fallbackOptions" :key="option" :value="option">{{ option }}</option>
+        </select>
       </label>
-      <datalist id="dae-routing-targets">
-        <option v-for="option in targetOptions" :key="option" :value="option" />
-      </datalist>
     </section>
 
     <p v-if="validationError" class="form-error">{{ validationError }}</p>
