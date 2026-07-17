@@ -81,3 +81,27 @@ msgstr "更新时间（每天）"
 
 msgid "Format Code"
 msgstr "格式化代码"
+
+msgid "Restarting dae service… %ds"
+msgstr "正在重启 dae 服务… %d 秒"
+
+msgid "Reloading dae service… %ds"
+msgstr "正在重载 dae 服务… %d 秒"
+
+msgid "dae service restarted."
+msgstr "dae 服务已重启。"
+
+msgid "dae service reloaded."
+msgstr "dae 服务已重载。"
+
+msgid "Applying configuration changes… %ds"
+msgstr "正在应用配置更改… %d 秒"
+
+msgid "Starting configuration apply…"
+msgstr "正在开始应用配置…"
+
+msgid "Configuration changes applied."
+msgstr "配置更改已应用。"
+
+msgid "Error"
+msgstr "错误"

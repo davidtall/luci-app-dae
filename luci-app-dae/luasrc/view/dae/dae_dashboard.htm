@@ -31,7 +31,7 @@
 <iframe
 	id="dae-dashboard-frame"
 	class="dae-dashboard-frame"
-	src="/luci-static/resources/dae/dashboard/index.html?v=1.1.0-r28"
+	src="/luci-static/resources/dae/dashboard/index.html?v=1.1.0-r29"
 	title="DAE Dashboard"
 ></iframe>
 
@@ -51,12 +51,64 @@
 	var applyStartedAt = 0;
 	var applyDeadline = 0;
 	var applyProgressTimer = null;
+	var serviceAction = '';
+	var serviceStartedAt = 0;
+	var serviceDeadline = 0;
+	var serviceProgressTimer = null;
 
 	function clearApplyProgress() {
 		if (applyProgressTimer !== null) {
 			window.clearTimeout(applyProgressTimer);
 			applyProgressTimer = null;
 		}
+	}
+
+	function clearServiceProgress() {
+		if (serviceProgressTimer !== null) {
+			window.clearTimeout(serviceProgressTimer);
+			serviceProgressTimer = null;
+		}
+	}
+
+	function showServiceProgress() {
+		if (!(L.ui && L.ui.changes && L.ui.changes.displayStatus))
+			return;
+
+		var remaining = Math.max(Math.ceil((serviceDeadline - Date.now()) / 1000), 0);
+		var message = serviceAction === 'restart'
+			? _('Restarting dae service… %ds')
+			: _('Reloading dae service… %ds');
+		L.ui.changes.displayStatus(
+			'notice spinning',
+			E('p', message.format(remaining))
+		);
+		serviceProgressTimer = window.setTimeout(showServiceProgress, 1000);
+	}
+
+	function startServiceProgress(action) {
+		serviceAction = action;
+		serviceStartedAt = Date.now();
+		serviceDeadline = serviceStartedAt + (action === 'restart' ? 30 : 15) * 1000;
+		clearServiceProgress();
+		showServiceProgress();
+	}
+
+	function finishServiceProgress(ok) {
+		clearServiceProgress();
+		var wait = Math.max(900 - (Date.now() - serviceStartedAt), 0);
+		window.setTimeout(function() {
+			if (!(L.ui && L.ui.changes && L.ui.changes.displayStatus))
+				return;
+			L.ui.changes.displayStatus(
+				ok ? 'notice' : 'warning',
+				E('p', ok
+					? (serviceAction === 'restart' ? _('dae service restarted.') : _('dae service reloaded.'))
+					: _('Error'))
+			);
+			window.setTimeout(function() {
+				L.ui.changes.displayStatus(false);
+			}, ok ? 1200 : 4000);
+		}, wait);
 	}
 
 	function showApplyProgress() {
@@ -141,6 +193,12 @@
 		else if (data.type === 'resize') {
 			var height = Math.max(640, Math.min(Number(data.height) || 720, 2400));
 			frame.style.height = height + 'px';
+		}
+		else if (data.type === 'service-action') {
+			if (data.phase === 'start')
+				startServiceProgress(data.action);
+			else if (data.phase === 'finish')
+				finishServiceProgress(data.ok === true);
 		}
 		else if (data.type === 'result') {
 			validateButton.classList.remove('spinning');

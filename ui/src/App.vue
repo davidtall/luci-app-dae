@@ -224,21 +224,40 @@ async function saveRouting(values: RoutingFormValues) {
   }
 }
 
+function notifyParentServiceAction(action: 'reload' | 'restart', phase: 'start' | 'finish', ok = true) {
+  window.parent.postMessage({
+    source: 'luci-app-dae-dashboard',
+    type: 'service-action',
+    action,
+    phase,
+    ok,
+  }, window.location.origin)
+}
+
 async function reloadDashboard() {
   if (dirty.value && !window.confirm('当前有未保存修改，重载会丢弃这些修改，是否继续？')) return
+  notifyParentServiceAction('reload', 'start')
   try {
     await loadState()
-    await reloadService()
+    const ok = await reloadService()
+    if (!ok) {
+      notifyParentServiceAction('reload', 'finish', false)
+      return
+    }
     await postParentHeight()
     showToast('配置已重载')
+    notifyParentServiceAction('reload', 'finish')
   } catch {
+    notifyParentServiceAction('reload', 'finish', false)
     // loadState already displays the error toast.
   }
 }
 
 async function restartDae() {
   if (dirty.value && !window.confirm('当前有未保存修改，重启将使用已保存配置，是否继续？')) return
-  await restartService()
+  notifyParentServiceAction('restart', 'start')
+  const ok = await restartService()
+  notifyParentServiceAction('restart', 'finish', ok)
 }
 
 function warnUnsavedChanges(event: BeforeUnloadEvent) {

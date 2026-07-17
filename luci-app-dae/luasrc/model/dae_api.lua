@@ -959,7 +959,9 @@ function M.save(payload, apply)
         if service.enabled then
             if service.running then
                 action = "reload"
-                service_code = sys.call("rm -f /tmp/luci-dae-service.log; /etc/init.d/dae hot_reload >/tmp/luci-dae-service.log 2>&1 &")
+                service_code = sys.call("rm -f /tmp/luci-dae-service.log; /etc/init.d/dae hot_reload >/tmp/luci-dae-service.log 2>&1")
+                service_output = trim(read_file("/tmp/luci-dae-service.log"))
+                fs.remove("/tmp/luci-dae-service.log")
             else
                 action = "start"
                 service_code = sys.call("/etc/init.d/dae start >/tmp/luci-dae-service.log 2>&1")
@@ -972,8 +974,6 @@ function M.save(payload, apply)
             service_output = read_file("/tmp/luci-dae-service.log")
             fs.remove("/tmp/luci-dae-service.log")
         end
-        service_pending = service_code == 0
-        if service_pending then action = action .. "_started" end
     end
 
     local response = {
@@ -997,20 +997,29 @@ end
 
 function M.reload()
 	local log_path = string.format("/tmp/luci-dae-reload.%d.log", nixio.getpid())
-	local code = sys.call("rm -f " .. shell_quote(log_path) .. "; /etc/init.d/dae hot_reload >" .. shell_quote(log_path) .. " 2>&1 &")
+	local code = sys.call("rm -f " .. shell_quote(log_path) .. "; /etc/init.d/dae hot_reload >" .. shell_quote(log_path) .. " 2>&1")
+	local output = trim(read_file(log_path))
+	fs.remove(log_path)
 	return {
 		ok = code == 0,
-		serviceAction = "reload_started",
-		requested = code == 0
+		serviceAction = code == 0 and "reload" or "reload_failed",
+		requested = code == 0,
+		servicePending = false,
+		serviceOutput = output
 	}, code == 0 and 200 or 500
 end
 
 function M.restart()
-    local code = sys.call("/etc/init.d/dae restart >/tmp/luci-dae-restart.log 2>&1 &")
+    local log_path = string.format("/tmp/luci-dae-restart.%d.log", nixio.getpid())
+    local code = sys.call("/etc/init.d/dae restart >" .. shell_quote(log_path) .. " 2>&1")
+    local output = trim(read_file(log_path))
+    fs.remove(log_path)
     return {
         ok = code == 0,
-        serviceAction = "restart_started",
-        requested = code == 0
+        serviceAction = code == 0 and "restart" or "restart_failed",
+        requested = code == 0,
+        servicePending = false,
+        serviceOutput = output
     }, code == 0 and 200 or 500
 end
 

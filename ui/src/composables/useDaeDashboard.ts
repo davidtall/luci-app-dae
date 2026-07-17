@@ -261,10 +261,8 @@ export function useDaeDashboard() {
     showToast('正在重载 dae 服务…')
     try {
       await request<ApplyResult>('reload', {})
+      await loadState().catch(() => undefined)
       showToast('dae 服务已重载')
-      window.setTimeout(() => {
-        loadState().catch(() => undefined)
-      }, 1500)
       return true
     } catch (error) {
       showToast((error as Error).message, true)
@@ -276,12 +274,11 @@ export function useDaeDashboard() {
 
   async function restartService() {
     busy.value = true
+    showToast('正在重启 dae 服务…')
     try {
       await request<ApplyResult>('restart', {})
-      showToast('dae 服务重启已发起')
-      window.setTimeout(() => {
-        loadState().catch(() => undefined)
-      }, 1500)
+      await loadState().catch(() => undefined)
+      showToast('dae 服务已重启')
       return true
     } catch (error) {
       showToast((error as Error).message, true)
