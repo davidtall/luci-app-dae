@@ -5,12 +5,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=dae
-PKG_VERSION:=2026.07.13
+PKG_VERSION:=2026.08.26
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_VERSION:=f303e94cebeda73de63a5ab00652009a12f2384e
+PKG_SOURCE_VERSION:=04137361d599099d9b1aa390785137adec72e372
 PKG_SOURCE_URL:=https://github.com/olicesx/dae.git
 PKG_MIRROR_HASH:=skip
 
@@ -115,7 +115,6 @@ define Package/dae/install
 	$(INSTALL_DIR) $(1)/usr/bin/
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/dae $(1)/usr/bin/dae
 	$(INSTALL_DIR) $(1)/etc/dae/
-	$(INSTALL_DIR) $(1)/etc/dae/config.d
 	$(INSTALL_CONF) $(PKG_BUILD_DIR)/example.dae $(1)/etc/dae/
 	$(INSTALL_CONF) $(CURDIR)/files/config.dae $(1)/etc/dae/config.dae
 	$(INSTALL_DIR) $(1)/etc/dae/config.d/
