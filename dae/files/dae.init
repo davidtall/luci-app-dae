@@ -75,12 +75,12 @@ hijack_resolv_conf() {
     done
 
     mount --bind "$RESOLV_DAE" /tmp/resolv.conf
-    mount -o remount,ro,bind /tmp/resolv.conf
+    mount -o remount,ro,bind /tmp/resolv.conf /tmp/resolv.conf
 }
 
 restore_resolv_conf() {
     grep -q ' /tmp/resolv\.conf ' /proc/mounts || return 0
-    mount -o remount,rw,bind /tmp/resolv.conf 2>/dev/null
+    mount -o remount,rw,bind /tmp/resolv.conf /tmp/resolv.conf 2>/dev/null
     umount /tmp/resolv.conf 2>/dev/null
     rm -f "$RESOLV_DAE"
 }
