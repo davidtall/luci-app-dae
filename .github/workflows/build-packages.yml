@@ -32,10 +32,10 @@ jobs:
       matrix:
         arch:
           - aarch64_generic    
-          - i386_pentium4
+          - aarch64_cortex-a53
           - x86_64
         sdk:
-          - openwrt-24.10
+          - openwrt-25.10
 
     steps:
       - uses: actions/checkout@v6
@@ -62,7 +62,7 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: ${{ matrix.arch }}
-          path: bin/packages/${{ matrix.arch }}/packages_ci/*.ipk
+          path: bin/packages/${{ matrix.arch }}/packages_ci/*.apk
 
   release:
     name: Publish release
@@ -89,6 +89,6 @@ jobs:
           tag: dae_kix_${{ needs.prepare.outputs.version }}
           commit: kix
           token: ${{secrets.ACTIONS_DEPLOY_KEY}}
-          artifacts: "release-dist/*.ipk"
+          artifacts: "release-dist/*.apk"
           allowUpdates: true
           replacesArtifacts: true
