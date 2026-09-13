@@ -58,6 +58,23 @@ jobs:
           NO_REFRESH_CHECK: true
           V: s
 
+      - name: Rename APK artifacts
+        env:
+          TARGET_ARCH: ${{ matrix.arch }}
+        run: |
+          set -euo pipefail
+          package_dir="bin/packages/${TARGET_ARCH}/packages_ci"
+          shopt -s nullglob
+
+          for package in "${package_dir}"/dae-*.apk; do
+            filename=$(basename "${package}")
+            version_release="${filename#dae-}"
+            version_release="${version_release%.apk}"
+            mv -- "${package}" "${package_dir}/dae_${version_release}_${TARGET_ARCH}.apk"
+          done
+
+          ls -lah "${package_dir}"
+
       - name: Upload artifacts
         uses: actions/upload-artifact@v7
         with:
