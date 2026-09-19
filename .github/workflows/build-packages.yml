@@ -70,7 +70,7 @@ jobs:
             filename=$(basename "${package}")
             version_release="${filename#dae-}"
             version_release="${version_release%.apk}"
-            mv -- "${package}" "${package_dir}/dae_${version_release}_${TARGET_ARCH}.apk"
+            mv -- "${package}" "${package_dir}/dae_v${version_release}_${TARGET_ARCH}.apk"
           done
 
           ls -lah "${package_dir}"
