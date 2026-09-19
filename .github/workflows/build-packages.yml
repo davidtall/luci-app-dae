@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - kix
+      - main
 
 jobs:
   prepare:
@@ -102,9 +102,9 @@ jobs:
       - name: Create or update GitHub release
         uses: ncipollo/release-action@v1
         with:
-          name: dae_kix_${{ needs.prepare.outputs.version }}
-          tag: dae_kix_${{ needs.prepare.outputs.version }}
-          commit: kix
+          name: dae_main_${{ needs.prepare.outputs.version }}
+          tag: dae_main_${{ needs.prepare.outputs.version }}
+          commit: main
           token: ${{secrets.ACTIONS_DEPLOY_KEY}}
           artifacts: "release-dist/*.apk"
           allowUpdates: true
