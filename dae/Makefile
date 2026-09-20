@@ -124,6 +124,8 @@ define Package/dae/install
 	$(INSTALL_CONF) $(CURDIR)/files/dae.config $(1)/etc/config/dae
 	$(INSTALL_DIR) $(1)/etc/init.d
 	$(INSTALL_BIN) $(CURDIR)/files/dae.init $(1)/etc/init.d/dae
+	$(INSTALL_DIR) $(1)/usr/share
+	$(LN) -s /usr/share/v2ray $(1)/usr/share/dae
 endef
 
 $(eval $(call GoBinPackage,dae))
