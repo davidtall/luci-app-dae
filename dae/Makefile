@@ -5,12 +5,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=dae
-PKG_VERSION:=2.1.1
+PKG_VERSION:=2.1.2
 PKG_RELEASE:=3
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_VERSION:=e3fee8fbc68a65167af13b685ab0b958757e20ee
+PKG_SOURCE_VERSION:=v2.1.2
 PKG_SOURCE_URL:=https://github.com/daeuniverse/dae.git
 PKG_MIRROR_HASH:=skip
 
