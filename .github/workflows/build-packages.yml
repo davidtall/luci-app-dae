@@ -25,7 +25,7 @@ jobs:
 
   build:
     name: Build ${{ matrix.arch }}-${{ matrix.sdk }}
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-26.04
     needs: prepare
     strategy:
       fail-fast: false
@@ -47,7 +47,7 @@ jobs:
           DEBIAN_FRONTEND: noninteractive
         run: |
           sudo -E apt-get -qq update
-          sudo -E apt-get -qq install clang-15 llvm-15
+          sudo -E apt-get -qq install clang-22 llvm-22
 
       - name: Building packages
         uses: sbwml/openwrt-gh-action-sdk@go1.27
